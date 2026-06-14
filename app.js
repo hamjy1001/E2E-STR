@@ -320,30 +320,140 @@
     const tasks = visibleTasks('client').slice().sort((a,b)=>STAGES.indexOf(a.stage)-STAGES.indexOf(b.stage)||dateVal(a.startDate)-dateVal(b.startDate));
     const budget = budgetTotals();
     const needs = clientNeedItems(tasks);
-    const openNeeds = needs.filter(t=>t.status!=='Complete').slice(0,6);
+    const urgent = needs.filter(t=>t.status!=='Complete');
 
-    $('#clientNeeds') && ($('#clientNeeds').innerHTML = openNeeds.length ? openNeeds.map(clientNeedCard).join('') : `<article class="client-need-card complete-card"><span class="badge complete">Clear</span><h3>No action needed</h3><p>We will update this if we need anything.</p></article>`);
-    renderClientProvideUi(openNeeds);
-    $('#clientStageSummary') && ($('#clientStageSummary').innerHTML = STAGES.map(stage=>clientStageSummaryCard(stage,tasks)).join(''));
-    $('#clientStageAccordions') && ($('#clientStageAccordions').innerHTML = STAGES.map((stage,i)=>clientStageAccordion(stage,tasks,i)).join(''));
-    renderGantt('client');
-    $('#clientBudget') && ($('#clientBudget').innerHTML=[statCard('Approved Budget',money(state.project.approvedBudget),'Owner-approved target'),statCard('Planned Budget',money(budget.budget),'Current plan'),statCard('Actual Spend',money(budget.actual),'Recorded'),statCard('Remaining',money(budget.remaining),'Planned minus actual')].join(''));
-    $('#clientBudgetByCategory') && ($('#clientBudgetByCategory').innerHTML = clientBudgetRows());
-    $('#clientFurnishing') && ($('#clientFurnishing').innerHTML = clientFurnishingCards());
-    $('#clientSecurityUtilities') && ($('#clientSecurityUtilities').innerHTML = clientSecurityUtilityCards());
-    $('#clientInspection') && ($('#clientInspection').innerHTML = clientInspectionCards());
-    $('#clientDetails') && ($('#clientDetails').innerHTML = clientDetailsCards());
+    $('#clientStageStepper') && ($('#clientStageStepper').innerHTML = renderClientStepper(tasks));
+
+    const primaryEl = $('#clientPrimaryCard');
+    if(primaryEl) primaryEl.innerHTML = urgent.length ? renderClientActionCard(urgent[0], urgent.length) : renderClientClearCard();
+
+    $('#clientStageSummary') && ($('#clientStageSummary').innerHTML = STAGES.map(stage=>renderClientStageCard(stage,tasks)).join(''));
+    $('#clientStageAccordions') && ($('#clientStageAccordions').innerHTML = STAGES.map((stage,i)=>renderClientAccordion(stage,tasks,i)).join(''));
+    $('#clientBudgetContent') && ($('#clientBudgetContent').innerHTML = renderClientBudget(budget));
+    $('#clientDetailsContent') && ($('#clientDetailsContent').innerHTML = renderClientDetails());
+
     wireClientTabs();
-    wireClientSubmissionEvents();
+    wireClientSubmit(urgent);
+  }
+
+  function renderClientStepper(tasks){
+    const firstOpenIdx = STAGES.findIndex(s=>tasks.filter(t=>t.stage===s).some(t=>t.status!=='Complete'));
+    const activeIdx = firstOpenIdx === -1 ? STAGES.length : firstOpenIdx;
+    return '<div class="cp-stage-stepper">' + STAGES.map((stage,i)=>{
+      const cls = i<activeIdx ? 'done' : i===activeIdx ? 'active' : '';
+      const dot = i<activeIdx ? '✓' : (i+1);
+      const p = pct(taskPct(tasks.filter(t=>t.stage===stage)));
+      const lineAfter = i<STAGES.length-1 ? `<div class="cp-step-line${i<activeIdx?' done':''}"></div>` : '';
+      return `<div class="cp-step ${cls}"><div class="cp-step-dot">${dot}</div><div class="cp-step-label">${esc(stage)}</div>${i===activeIdx?`<div class="cp-step-pct">${p}</div>`:''}</div>${lineAfter}`;
+    }).join('') + '</div>';
+  }
+
+  function renderClientActionCard(need, count){
+    const subs = (state.clientSubmissions||[]).slice(0,5);
+    const subsHtml = subs.length ? `<div class="cp-submissions"><h4>Sent to team</h4>${subs.map(s=>`<div class="cp-sub-item"><div><div class="cp-sub-title">${esc(s.needTitle||'General')}</div>${s.note?`<div class="cp-sub-note">${esc(s.note.slice(0,90))}${s.note.length>90?'…':''}</div>`:''}</div><div style="display:flex;align-items:center;gap:8px"><div class="cp-sub-date">${fmtShortDate(s.date)}</div><button class="cp-sub-delete" data-delete-submission="${esc(s.id)}">remove</button></div></div>`).join('')}</div>` : '';
+    return `<div class="cp-primary-card cp-action-card">
+      <div class="cp-card-eyebrow"><span class="cp-eyebrow-dot"></span>Your input is needed</div>
+      <h2 class="cp-card-title">${esc(need.title)}</h2>
+      <p class="cp-card-body">${esc(clientNeedShortText(need))}</p>
+      <div class="cp-due-row"><span class="cp-due-badge">Due ${fmtShortDate(need.endDate)}</span>${count>1?`<span class="cp-extra-count">+${count-1} more item${count>2?'s':''} awaiting your attention</span>`:''}</div>
+      <div class="cp-form">
+        <textarea id="clientManualInput" placeholder="Type your response, approval, or note here..."></textarea>
+        <div class="cp-form-row">
+          <label><span class="cp-file-btn">Attach files</span><input class="cp-file-input" id="clientFileInput" type="file" multiple /></label>
+          <button class="cp-send-btn" id="cpSubmitBtn">Send to E2E Team</button>
+        </div>
+        <input type="hidden" id="clientNeedSelect" value="${esc(need.id)}" />
+      </div>
+      ${subsHtml}
+    </div>`;
+  }
+
+  function renderClientClearCard(){
+    const focus = state.project.currentFocus || 'Moving your project forward on schedule.';
+    const next = state.project.clientNextAction || '';
+    const subs = (state.clientSubmissions||[]).slice(0,5);
+    const subsHtml = subs.length ? `<hr class="cp-divider"><div class="cp-submissions"><h4>Previously sent</h4>${subs.map(s=>`<div class="cp-sub-item"><div><div class="cp-sub-title">${esc(s.needTitle||'General')}</div>${s.note?`<div class="cp-sub-note">${esc(s.note.slice(0,90))}${s.note.length>90?'…':''}</div>`:''}</div><div style="display:flex;align-items:center;gap:8px"><div class="cp-sub-date">${fmtShortDate(s.date)}</div><button class="cp-sub-delete" data-delete-submission="${esc(s.id)}">remove</button></div></div>`).join('')}</div>` : '';
+    return `<div class="cp-primary-card cp-clear-card">
+      <div class="cp-card-eyebrow"><span class="cp-eyebrow-dot" style="background:#16a34a"></span>You're all set for now</div>
+      <h2 class="cp-card-title">No action needed from you right now.</h2>
+      <p class="cp-card-body">Here's what we're currently working on:</p>
+      <p class="cp-focus-text">"${esc(focus)}"</p>
+      ${next ? `<div style="margin-top:20px"><div class="cp-next-label">When we'll next need you</div><p class="cp-next-text">${esc(next)}</p></div>` : ''}
+      ${subsHtml}
+    </div>`;
+  }
+
+  function renderClientStageCard(stage, tasks){
+    const items = tasks.filter(t=>t.stage===stage);
+    const progress = taskPct(items);
+    const open = items.filter(t=>t.status!=='Complete').length;
+    const firstOpenIdx = STAGES.findIndex(s=>tasks.filter(t=>t.stage===s).some(t=>t.status!=='Complete'));
+    const isActive = STAGES.indexOf(stage) === firstOpenIdx;
+    const next = items.filter(t=>t.status!=='Complete').sort((a,b)=>dateVal(a.endDate)-dateVal(b.endDate))[0];
+    return `<div class="cp-stage-card${isActive?' is-active':''}">
+      <div class="cp-stage-card-label">${esc(stage)}</div>
+      <div class="cp-stage-card-pct">${pct(progress)}</div>
+      <div class="cp-stage-bar"><div class="cp-stage-bar-fill" style="width:${Math.max(0,Math.min(100,progress))}%"></div></div>
+      <div class="cp-stage-card-note">${items.length} steps · ${open} open</div>
+      ${next ? `<div class="cp-stage-card-next">Next: ${esc(next.title)}</div>` : `<div class="cp-stage-card-next" style="color:#16a34a">✓ Complete</div>`}
+    </div>`;
+  }
+
+  function renderClientAccordion(stage, tasks, index){
+    const items = tasks.filter(t=>t.stage===stage);
+    const progress = taskPct(items);
+    const open = items.filter(t=>t.status!=='Complete').length;
+    const isActive = items.some(isTodayInTask);
+    return `<details class="cp-accordion"${isActive||index===0?' open':''}>
+      <summary>
+        <div><div class="cp-accordion-title">${esc(stage)}</div><div class="cp-accordion-meta">${items.length} steps · ${open} open</div></div>
+        <div class="cp-accordion-right"><span class="cp-pct-pill">${pct(progress)}</span>${isActive?'<span class="cp-active-pill">Active now</span>':''}</div>
+      </summary>
+      <div class="cp-step-list">${items.map((t,i)=>{
+        const active = isTodayInTask(t);
+        return `<div class="cp-step-item${active?' is-active':''}">
+          <div class="cp-step-num">${i+1}</div>
+          <div>
+            <div class="cp-step-name">${esc(t.title)}</div>
+            <div class="cp-step-detail">
+              <span>${esc(t.owner)}</span>
+              <span>${fmtShortDate(t.startDate)} – ${fmtShortDate(t.endDate)}</span>
+              <span class="cp-step-badge badge ${statusClass(t.status)}">${esc(t.status)}</span>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}</div>
+    </details>`;
+  }
+
+  function renderClientBudget(budget){
+    const rows = state.budget.map(b=>`<tr><td>${esc(b.category)}</td><td>${esc(b.item)}</td><td>${money(b.budget)}</td><td>${money(b.actual)}</td><td><span class="badge ${statusClass(b.status)}">${esc(b.status)}</span></td></tr>`).join('');
+    return `<div class="cp-budget-grid">
+      <div class="cp-budget-stat"><div class="cp-budget-stat-label">Approved Budget</div><div class="cp-budget-stat-value">${money(state.project.approvedBudget)}</div></div>
+      <div class="cp-budget-stat"><div class="cp-budget-stat-label">Actual Spend</div><div class="cp-budget-stat-value">${money(budget.actual)}</div></div>
+      <div class="cp-budget-stat"><div class="cp-budget-stat-label">Planned Total</div><div class="cp-budget-stat-value">${money(budget.budget)}</div></div>
+      <div class="cp-budget-stat"><div class="cp-budget-stat-label">Remaining</div><div class="cp-budget-stat-value">${money(budget.remaining)}</div></div>
+    </div>
+    <table class="cp-budget-table"><thead><tr><th>Category</th><th>Item</th><th>Planned</th><th>Actual</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  function renderClientDetails(){
+    const details = [
+      ['Market',state.project.market],['Property Address',state.project.propertyAddress],['Property Type',state.project.propertyType],
+      ['Bedrooms',state.project.bedrooms],['Bathrooms',state.project.bathrooms],['Sleeps',state.project.sleeps],
+      ['Closing Date',fmtDate(state.project.closingDate)],['Target Launch',fmtDate(state.project.targetLaunchDate)],
+      ['Property Manager',state.project.propertyManager],['Cleaner',state.project.cleaner],['Client',state.project.clientName]
+    ];
+    return `<div class="cp-details-grid">${details.map(([l,v])=>`<div class="cp-detail-item"><div class="cp-detail-label">${esc(l)}</div><div class="cp-detail-value">${esc(v||'TBD')}</div></div>`).join('')}</div>`;
   }
 
   function wireClientTabs(){
-    $$('.client-tabs .tab-button').forEach(btn=>{
+    $$('.cp-tab-btn').forEach(btn=>{
       btn.onclick=()=>{
-        $$('.client-tabs .tab-button').forEach(b=>b.classList.remove('active'));
-        $$('.client-content .tab-section').forEach(s=>s.classList.remove('active'));
+        $$('.cp-tab-btn').forEach(b=>b.classList.remove('active'));
+        $$('.cp-tab-panel').forEach(p=>p.classList.remove('active'));
         btn.classList.add('active');
-        $('#client-tab-'+btn.dataset.clientTab)?.classList.add('active');
+        $('#cp-panel-'+btn.dataset.cpTab)?.classList.add('active');
       };
     });
   }
@@ -355,31 +465,39 @@
     return [...clientOwned, ...nextByDue].filter(t=>{ if(seen.has(t.id)) return false; seen.add(t.id); return true; }).sort((a,b)=>dateVal(a.endDate)-dateVal(b.endDate));
   }
 
-  function clientNeedCard(t){
-    return `<article class="client-need-card ${statusClass(t.status)}"><span class="badge ${statusClass(t.status)}">${esc(t.status)}</span><h3>${esc(t.title)}</h3><p>${esc(clientNeedShortText(t))}</p><div class="client-need-meta"><span>Due ${fmtShortDate(t.endDate)}</span><span>${esc(t.owner)}</span></div></article>`;
-  }
-
   function clientNeedShortText(t){
     const text = `${t.title} ${t.notes}`.toLowerCase();
-    if(text.includes('approve') || text.includes('approval') || text.includes('budget')) return 'Please approve or comment.';
-    if(text.includes('utility') || text.includes('account') || text.includes('access')) return 'Please provide access or account info.';
-    if(text.includes('document') || text.includes('mortgage') || text.includes('closing')) return 'Please upload the document or update.';
-    if(text.includes('confirm')) return 'Please confirm.';
-    return 'Please send what you have.';
+    if(text.includes('approve') || text.includes('approval') || text.includes('budget')) return 'Please review and approve, or leave a comment below.';
+    if(text.includes('utility') || text.includes('account') || text.includes('access')) return 'Please provide account access or login details.';
+    if(text.includes('document') || text.includes('mortgage') || text.includes('closing')) return 'Please upload the relevant document or send an update.';
+    if(text.includes('confirm')) return 'Please confirm so we can move forward.';
+    return 'Please send whatever you have — a note is fine.';
   }
 
-
-  function renderClientProvideUi(openNeeds){
-    const select = $('#clientNeedSelect');
-    if(select){
-      const options = openNeeds.length ? openNeeds : visibleTasks('client').filter(t=>t.status!=='Complete').slice(0,6);
-      select.innerHTML = options.length ? options.map(t=>`<option value="${esc(t.id)}">${esc(t.title)}</option>`).join('') : '<option value="general">General update</option>';
-    }
-    const list = $('#clientSubmissionList');
-    if(list){
-      const items = (state.clientSubmissions || []).slice(0,8);
-      list.innerHTML = items.length ? items.map(clientSubmissionCard).join('') : '<div class="small-note client-submit-empty">No items sent yet.</div>';
-    }
+  function wireClientSubmit(urgent){
+    const btn = $('#cpSubmitBtn');
+    if(!btn) return;
+    btn.onclick = () => {
+      const needId = $('#clientNeedSelect')?.value || 'general';
+      const task = urgent.find(t=>t.id===needId) || urgent[0];
+      const note = ($('#clientManualInput')?.value||'').trim();
+      const files = Array.from($('#clientFileInput')?.files||[]);
+      if(!note && !files.length){ alert('Add a note or attach a file first.'); return; }
+      const submission = {id:newId('sub'), date:addDays(0), needId, needTitle:task?task.title:'General update', note, files:[]};
+      Promise.all(files.map(readClientFile)).then(fileList=>{
+        state = load();
+        state.clientSubmissions = Array.isArray(state.clientSubmissions)?state.clientSubmissions:[];
+        submission.files = fileList;
+        state.clientSubmissions.unshift(submission);
+        save();
+        render('client');
+      });
+    };
+    $$('[data-delete-submission]').forEach(b=>b.onclick=()=>{
+      state = load();
+      state.clientSubmissions = (state.clientSubmissions||[]).filter(i=>i.id!==b.dataset.deleteSubmission);
+      save(); render('client');
+    });
   }
 
   function clientSubmissionCard(item){
@@ -389,37 +507,6 @@
       return `<li>${esc(f.name || 'file')}${esc(size)}${link}${f.large?' - file too large for local demo storage':''}</li>`;
     }).join('');
     return `<article class="client-submission-card"><div><strong>${esc(item.needTitle || 'General update')}</strong><span>${fmtShortDate(item.date)}</span></div>${item.note?`<p>${esc(item.note)}</p>`:''}${files?`<ul>${files}</ul>`:''}<button class="small-button" type="button" data-delete-submission="${esc(item.id)}">Remove</button></article>`;
-  }
-
-  function wireClientSubmissionEvents(){
-    const form = $('#clientProvideForm');
-    if(form){
-      form.onsubmit = e => {
-        e.preventDefault();
-        const needId = $('#clientNeedSelect')?.value || 'general';
-        const task = visibleTasks('client').find(t=>t.id===needId);
-        const note = ($('#clientManualInput')?.value || '').trim();
-        const files = Array.from($('#clientFileInput')?.files || []);
-        if(!note && !files.length){ alert('Add a note or choose a file first.'); return; }
-        const submission = {id:newId('sub'), date:addDays(0), needId, needTitle:task?task.title:'General update', note, files:[]};
-        Promise.all(files.map(readClientFile)).then(fileList=>{
-          state = load();
-          state.clientSubmissions = Array.isArray(state.clientSubmissions) ? state.clientSubmissions : [];
-          submission.files = fileList;
-          state.clientSubmissions.unshift(submission);
-          save();
-          if($('#clientManualInput')) $('#clientManualInput').value='';
-          if($('#clientFileInput')) $('#clientFileInput').value='';
-          render('client');
-        });
-      };
-    }
-    $$('[data-delete-submission]').forEach(btn=>btn.onclick=()=>{
-      state = load();
-      state.clientSubmissions = (state.clientSubmissions || []).filter(item=>item.id!==btn.dataset.deleteSubmission);
-      save();
-      render('client');
-    });
   }
 
   function readClientFile(file){
@@ -437,57 +524,6 @@
     const items = (state.clientSubmissions || []);
     if(!items.length) return '<div class="small-note">No client submissions yet.</div>';
     return `<div class="client-submission-list team-submission-list">${items.map(clientSubmissionCard).join('')}</div>`;
-  }
-
-  function clientStageSummaryCard(stage,tasks){
-    const items = tasks.filter(t=>t.stage===stage);
-    const progress = taskPct(items);
-    const open = items.filter(t=>t.status!=='Complete').length;
-    const range = stageDateRange(items);
-    const current = items.find(isTodayInTask);
-    const next = items.filter(t=>t.status!=='Complete').sort((a,b)=>dateVal(a.endDate)-dateVal(b.endDate))[0];
-    return `<article class="client-stage-summary-card ${current?'current-stage':''}"><div class="stage-summary-top"><strong>${esc(stage)}</strong><span>${pct(progress)}</span></div><div class="client-progress-bar"><span style="width:${Math.max(0,Math.min(100,progress))}%"></span></div><p>${items.length} steps | ${open} open</p>${current?`<em>Today: ${esc(current.title)}</em>`:next?`<em>Next: ${esc(next.title)}</em>`:`<em>Complete</em>`}</article>`;
-  }
-
-  function clientStageAccordion(stage,tasks,index){
-    const items = tasks.filter(t=>t.stage===stage);
-    const progress = taskPct(items);
-    const open = items.filter(t=>t.status!=='Complete').length;
-    const current = items.some(isTodayInTask);
-    return `<details class="client-stage-dropdown" ${current||index===0?'open':''}><summary><div><strong>${esc(stage)}</strong><span>${items.length} steps | ${open} open</span></div><div class="summary-right"><span class="stage-progress-pill">${pct(progress)}</span>${current?'<span class="today-pill">Currently here today</span>':''}</div></summary><div class="client-step-list">${items.map((t,i)=>clientStepRow(t,i)).join('')}</div></details>`;
-  }
-
-  function clientStepRow(t,i){
-    return `<article class="client-step-row ${isTodayInTask(t)?'is-current':''}"><div class="step-index">${i+1}</div><div class="step-body"><div class="step-title-row"><h3>${esc(t.title)}</h3><span class="badge ${statusClass(t.status)}">${esc(t.status)}</span></div><div class="step-meta"><span>${esc(t.owner)}</span><span>${fmtShortDate(t.startDate)} - ${fmtShortDate(t.endDate)}</span>${isTodayInTask(t)?'<span class="today-inline">Currently here today</span>':''}</div></div></article>`;
-  }
-
-  function clientBudgetRows(){
-    if(!state.budget.length) return '<div class="small-note">No budget lines yet.</div>';
-    return `<div class="table-wrap client-table-wrap"><table><thead><tr><th>Category</th><th>Item</th><th>Planned</th><th>Actual</th><th>Status</th></tr></thead><tbody>${state.budget.map(b=>`<tr><td>${esc(b.category)}</td><td>${esc(b.item)}</td><td>${money(b.budget)}</td><td>${money(b.actual)}</td><td><span class="badge ${statusClass(b.status)}">${esc(b.status)}</span></td></tr>`).join('')}</tbody></table></div>`;
-  }
-
-  function clientFurnishingCards(){
-    const furniture = state.furniture.map(f=>`<article class="client-info-card"><h3>${esc(f.room)} - ${esc(f.item)}</h3><p>${esc(f.notes || '')}</p><div class="step-meta"><span>${esc(f.status)}</span><span>${esc(f.delivery || 'Delivery TBD')}</span><span>${f.installed?'Installed':'Not installed'}</span></div></article>`).join('');
-    const purchases = state.purchases.map(p=>`<article class="client-info-card"><h3>${esc(p.item)}</h3><p>${esc(p.notes || '')}</p><div class="step-meta"><span>${esc(p.category)}</span><span>${esc(p.status)}</span><span>${p.eta?fmtShortDate(p.eta):'ETA TBD'}</span></div></article>`).join('');
-    return `<div class="client-subsection"><h3>Furnishing plan</h3>${furniture || '<p class="small-note">No furniture items yet.</p>'}</div><div class="client-subsection"><h3>Major purchases</h3>${purchases || '<p class="small-note">No purchase items yet.</p>'}</div>`;
-  }
-
-  function clientSecurityUtilityCards(){
-    const securityPct = completedPct(state.security,s=>s.installed&&s.tested);
-    const utilityActive = state.utilities.filter(u=>u.status==='Active').length;
-    return `<div class="client-subsection"><h3>Security setup - ${pct(securityPct)}</h3>${state.security.map(s=>`<article class="client-info-card"><h3>${esc(s.item)}</h3><p>${esc(s.notes || '')}</p><div class="step-meta"><span>${esc(s.status)}</span><span>${s.installed?'Installed':'Not installed'}</span><span>${s.tested?'Tested':'Not tested'}</span></div></article>`).join('')}</div><div class="client-subsection"><h3>Utilities - ${utilityActive}/${state.utilities.length} active</h3>${state.utilities.map(u=>`<article class="client-info-card"><h3>${esc(u.service)}</h3><p>${esc(u.notes || '')}</p><div class="step-meta"><span>${esc(u.provider || 'Provider TBD')}</span><span>${esc(u.status)}</span><span>${u.activationDate?fmtShortDate(u.activationDate):'Activation TBD'}</span></div></article>`).join('')}</div>`;
-  }
-
-  function clientInspectionCards(){
-    const progress = completedPct(state.inspection,i=>i.complete);
-    return `<div class="client-inspection-progress"><strong>${pct(progress)} guest-ready</strong><div class="client-progress-bar"><span style="width:${progress}%"></span></div></div>${state.inspection.map(i=>`<article class="client-info-card"><h3>${esc(i.area)}</h3><p>${esc(i.item)}</p><div class="step-meta"><span class="badge ${i.complete?'complete':'progress'}">${i.complete?'Complete':'Open'}</span><span>${esc(i.owner)}</span><span>${esc(i.notes || '')}</span></div></article>`).join('')}`;
-  }
-
-  function clientDetailsCards(){
-    const details = [
-      ['Market',state.project.market],['Property Address',state.project.propertyAddress],['Property Type',state.project.propertyType],['Bedrooms',state.project.bedrooms],['Bathrooms',state.project.bathrooms],['Sleeps',state.project.sleeps],['Closing Date',fmtDate(state.project.closingDate)],['Target Launch Date',fmtDate(state.project.targetLaunchDate)],['Property Manager',state.project.propertyManager],['Cleaner',state.project.cleaner],['Current Focus',state.project.currentFocus]
-    ];
-    return details.map(([label,value])=>`<article class="client-detail-card"><small>${esc(label)}</small><strong>${esc(value)}</strong></article>`).join('');
   }
 
   function stageDateRange(items){
