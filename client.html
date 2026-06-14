@@ -45,9 +45,28 @@
           <div>
             <p class="eyebrow">Action needed first</p>
             <h2>What we need from you</h2>
-            <p>These are the owner/client decisions, approvals, or access items blocking the next phase of the launch.</p>
+            <p>Upload a file or type a note for the team.</p>
           </div>
         </div>
+        <form id="clientProvideForm" class="client-submit-box">
+          <div class="form-grid client-upload-grid">
+            <label class="field">
+              <span>Related item</span>
+              <select id="clientNeedSelect"></select>
+            </label>
+            <label class="field wide">
+              <span>Your note</span>
+              <textarea id="clientManualInput" placeholder="Type an answer, approval, login/access note, or question for the team."></textarea>
+            </label>
+            <label class="field client-file-field">
+              <span>Upload file</span>
+              <input id="clientFileInput" type="file" multiple />
+            </label>
+            <button class="button primary client-submit-button" type="submit">Send to Team</button>
+          </div>
+          <p class="small-note">Demo note: files are saved only in this browser until a real backend is connected.</p>
+        </form>
+        <div id="clientSubmissionList" class="client-submission-list"></div>
         <div id="clientNeeds" class="client-needs-grid"></div>
       </section>
 
@@ -56,7 +75,7 @@
           <div>
             <p class="eyebrow">Stage overview</p>
             <h2>Summary progress by stage</h2>
-            <p>Collapsed summary of where each part of the E2E STR workflow stands today.</p>
+            <p>Progress at a glance.</p>
           </div>
         </div>
         <div id="clientStageSummary" class="client-stage-summary-grid"></div>
@@ -78,7 +97,7 @@
               <div class="panel-header">
                 <div>
                   <h2>Step-by-step launch timeline</h2>
-                  <p>Each stage is collapsible. The blue marker in the Gantt chart shows <strong>Currently here today</strong>.</p>
+                  <p>Open a stage to see the steps.</p>
                 </div>
               </div>
               <div id="clientStageAccordions" class="client-stage-accordions"></div>
@@ -88,7 +107,7 @@
               <div class="panel-header">
                 <div>
                   <h2>Gantt chart</h2>
-                  <p>Client-visible milestones only. Internal vendor details remain in the team portal.</p>
+                  <p>Client-visible milestones.</p>
                 </div>
               </div>
               <div id="gantt"></div>
@@ -97,7 +116,7 @@
 
           <section id="client-tab-budget" class="tab-section">
             <section class="panel">
-              <div class="panel-header"><div><h2>Budget summary</h2><p>High-level client budget view. Detailed line-item editing remains in the team portal.</p></div></div>
+              <div class="panel-header"><div><h2>Budget summary</h2><p>High-level view.</p></div></div>
               <div id="clientBudget" class="cards four no-margin"></div>
               <div id="clientBudgetByCategory" class="client-list-table"></div>
             </section>
@@ -105,28 +124,28 @@
 
           <section id="client-tab-furnishing" class="tab-section">
             <section class="panel">
-              <div class="panel-header"><div><h2>Furnishing and orders</h2><p>Room-by-room furnishing and major purchase status.</p></div></div>
+              <div class="panel-header"><div><h2>Furnishing and orders</h2><p>Key furnishing status.</p></div></div>
               <div id="clientFurnishing" class="client-card-list"></div>
             </section>
           </section>
 
           <section id="client-tab-security" class="tab-section">
             <section class="panel">
-              <div class="panel-header"><div><h2>Security and utilities</h2><p>Post-closing safety systems and account activation status.</p></div></div>
+              <div class="panel-header"><div><h2>Security and utilities</h2><p>Setup status.</p></div></div>
               <div id="clientSecurityUtilities" class="client-split-grid"></div>
             </section>
           </section>
 
           <section id="client-tab-inspection" class="tab-section">
             <section class="panel">
-              <div class="panel-header"><div><h2>Guest-ready checklist</h2><p>Final inspection items before listing and guest handoff.</p></div></div>
+              <div class="panel-header"><div><h2>Guest-ready checklist</h2><p>Final readiness items.</p></div></div>
               <div id="clientInspection" class="client-card-list"></div>
             </section>
           </section>
 
           <section id="client-tab-details" class="tab-section">
             <section class="panel">
-              <div class="panel-header"><div><h2>Project details</h2><p>Core property and launch information.</p></div></div>
+              <div class="panel-header"><div><h2>Project details</h2><p>Property basics.</p></div></div>
               <div id="clientDetails" class="client-details-grid"></div>
             </section>
           </section>

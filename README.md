@@ -54,3 +54,8 @@ The Team Portal still includes the full internal tabs:
 ## Important note
 
 This is still a static MVP. Data is stored in browser localStorage. For real client/team collaboration across devices, connect this front-end to a backend such as Supabase, Firebase, Airtable, or a custom database.
+
+
+## Latest client portal update
+
+The client portal now has shorter client-facing language and a simplified top section called **What we need from you**. Clients can choose a related request, type a note, and attach files. In this static MVP, attachments are stored only in the browser/local demo state. For production, connect this to Supabase/Firebase/Airtable storage so uploaded files sync across devices and team members.

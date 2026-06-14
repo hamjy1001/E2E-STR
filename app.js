@@ -134,7 +134,8 @@
       ],
       metrics:{launchDate:'',daysToLaunch:'',firstBookingDate:'',month1Revenue:'',month1Occupancy:'',actualLaunchCost:'',notes:''},
       caseStudy:{title:'',market:'',propertyType:'',launchBudget:'',launchDays:'',challenge:'',solution:'',results:'',testimonial:''},
-      messages:[{from:'E2E Team',date:addDays(0),text:'Portal rebuilt with full tabs plus the new acquisition/setup/security/operations Gantt workflow.'}]
+      messages:[{from:'E2E Team',date:addDays(0),text:'Portal rebuilt with full tabs plus the new acquisition/setup/security/operations Gantt workflow.'}],
+      clientSubmissions:[]
     };
   }
 
@@ -142,7 +143,7 @@
     const d = defaultState();
     state = state || d;
     state.project = {...d.project, ...(state.project||{})};
-    for(const key of ['tasks','budget','furniture','purchases','vendors','utilities','security','operations','inventory','inspection','messages']) state[key] = Array.isArray(state[key]) ? state[key] : d[key];
+    for(const key of ['tasks','budget','furniture','purchases','vendors','utilities','security','operations','inventory','inspection','messages','clientSubmissions']) state[key] = Array.isArray(state[key]) ? state[key] : d[key];
     state.metrics = {...d.metrics, ...(state.metrics||{})};
     state.caseStudy = {...d.caseStudy, ...(state.caseStudy||{})};
     return state;
@@ -233,6 +234,7 @@
         ${statCard('Security Setup',pct(securityPct),'Installed and tested')}
         ${statCard('Operations Setup',pct(opsPct),'Launch workflow')}
       </section>
+      <section class="panel"><div class="panel-header"><h2>Client Submissions</h2><p>Files and notes sent from the client portal.</p></div>${teamClientSubmissionsHtml()}</section>
       <section class="panel"><div class="panel-header"><h2>Phase Summary</h2></div><div class="phase-grid">${STAGES.map(stage=>phaseCard(stage)).join('')}</div></section>
       <section class="panel"><div class="panel-header"><h2>Recent Client / Team Messages</h2></div><div class="message-list">${state.messages.map(m=>`<article><strong>${esc(m.from)} - ${fmtShortDate(m.date)}</strong><p>${esc(m.text)}</p></article>`).join('')}</div></section>
     `;
@@ -320,7 +322,8 @@
     const needs = clientNeedItems(tasks);
     const openNeeds = needs.filter(t=>t.status!=='Complete').slice(0,6);
 
-    $('#clientNeeds') && ($('#clientNeeds').innerHTML = openNeeds.length ? openNeeds.map(clientNeedCard).join('') : `<article class="client-need-card complete-card"><span class="badge complete">Clear</span><h3>No client action needed right now</h3><p>We will update this section when we need a decision, account access, approval, document, or payment confirmation from you.</p></article>`);
+    $('#clientNeeds') && ($('#clientNeeds').innerHTML = openNeeds.length ? openNeeds.map(clientNeedCard).join('') : `<article class="client-need-card complete-card"><span class="badge complete">Clear</span><h3>No action needed</h3><p>We will update this if we need anything.</p></article>`);
+    renderClientProvideUi(openNeeds);
     $('#clientStageSummary') && ($('#clientStageSummary').innerHTML = STAGES.map(stage=>clientStageSummaryCard(stage,tasks)).join(''));
     $('#clientStageAccordions') && ($('#clientStageAccordions').innerHTML = STAGES.map((stage,i)=>clientStageAccordion(stage,tasks,i)).join(''));
     renderGantt('client');
@@ -331,6 +334,7 @@
     $('#clientInspection') && ($('#clientInspection').innerHTML = clientInspectionCards());
     $('#clientDetails') && ($('#clientDetails').innerHTML = clientDetailsCards());
     wireClientTabs();
+    wireClientSubmissionEvents();
   }
 
   function wireClientTabs(){
@@ -352,7 +356,87 @@
   }
 
   function clientNeedCard(t){
-    return `<article class="client-need-card ${statusClass(t.status)}"><span class="badge ${statusClass(t.status)}">${esc(t.status)}</span><h3>${esc(t.title)}</h3><p>${esc(t.notes || 'Client input requested.')}</p><div class="client-need-meta"><span>${esc(t.stage)}</span><span>Due ${fmtShortDate(t.endDate)}</span><span>${esc(t.owner)}</span></div></article>`;
+    return `<article class="client-need-card ${statusClass(t.status)}"><span class="badge ${statusClass(t.status)}">${esc(t.status)}</span><h3>${esc(t.title)}</h3><p>${esc(clientNeedShortText(t))}</p><div class="client-need-meta"><span>Due ${fmtShortDate(t.endDate)}</span><span>${esc(t.owner)}</span></div></article>`;
+  }
+
+  function clientNeedShortText(t){
+    const text = `${t.title} ${t.notes}`.toLowerCase();
+    if(text.includes('approve') || text.includes('approval') || text.includes('budget')) return 'Please approve or comment.';
+    if(text.includes('utility') || text.includes('account') || text.includes('access')) return 'Please provide access or account info.';
+    if(text.includes('document') || text.includes('mortgage') || text.includes('closing')) return 'Please upload the document or update.';
+    if(text.includes('confirm')) return 'Please confirm.';
+    return 'Please send what you have.';
+  }
+
+
+  function renderClientProvideUi(openNeeds){
+    const select = $('#clientNeedSelect');
+    if(select){
+      const options = openNeeds.length ? openNeeds : visibleTasks('client').filter(t=>t.status!=='Complete').slice(0,6);
+      select.innerHTML = options.length ? options.map(t=>`<option value="${esc(t.id)}">${esc(t.title)}</option>`).join('') : '<option value="general">General update</option>';
+    }
+    const list = $('#clientSubmissionList');
+    if(list){
+      const items = (state.clientSubmissions || []).slice(0,8);
+      list.innerHTML = items.length ? items.map(clientSubmissionCard).join('') : '<div class="small-note client-submit-empty">No items sent yet.</div>';
+    }
+  }
+
+  function clientSubmissionCard(item){
+    const files = (item.files || []).map(f=>{
+      const size = f.size ? ` (${Math.round(f.size/1024)} KB)` : '';
+      const link = f.dataUrl ? ` <a href="${esc(f.dataUrl)}" download="${esc(f.name)}">download</a>` : '';
+      return `<li>${esc(f.name || 'file')}${esc(size)}${link}${f.large?' - file too large for local demo storage':''}</li>`;
+    }).join('');
+    return `<article class="client-submission-card"><div><strong>${esc(item.needTitle || 'General update')}</strong><span>${fmtShortDate(item.date)}</span></div>${item.note?`<p>${esc(item.note)}</p>`:''}${files?`<ul>${files}</ul>`:''}<button class="small-button" type="button" data-delete-submission="${esc(item.id)}">Remove</button></article>`;
+  }
+
+  function wireClientSubmissionEvents(){
+    const form = $('#clientProvideForm');
+    if(form){
+      form.onsubmit = e => {
+        e.preventDefault();
+        const needId = $('#clientNeedSelect')?.value || 'general';
+        const task = visibleTasks('client').find(t=>t.id===needId);
+        const note = ($('#clientManualInput')?.value || '').trim();
+        const files = Array.from($('#clientFileInput')?.files || []);
+        if(!note && !files.length){ alert('Add a note or choose a file first.'); return; }
+        const submission = {id:newId('sub'), date:addDays(0), needId, needTitle:task?task.title:'General update', note, files:[]};
+        Promise.all(files.map(readClientFile)).then(fileList=>{
+          state = load();
+          state.clientSubmissions = Array.isArray(state.clientSubmissions) ? state.clientSubmissions : [];
+          submission.files = fileList;
+          state.clientSubmissions.unshift(submission);
+          save();
+          if($('#clientManualInput')) $('#clientManualInput').value='';
+          if($('#clientFileInput')) $('#clientFileInput').value='';
+          render('client');
+        });
+      };
+    }
+    $$('[data-delete-submission]').forEach(btn=>btn.onclick=()=>{
+      state = load();
+      state.clientSubmissions = (state.clientSubmissions || []).filter(item=>item.id!==btn.dataset.deleteSubmission);
+      save();
+      render('client');
+    });
+  }
+
+  function readClientFile(file){
+    return new Promise(resolve=>{
+      const base = {name:file.name, size:file.size, type:file.type};
+      if(file.size > 1400000) return resolve({...base, large:true});
+      const reader = new FileReader();
+      reader.onload = () => resolve({...base, dataUrl:reader.result});
+      reader.onerror = () => resolve(base);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function teamClientSubmissionsHtml(){
+    const items = (state.clientSubmissions || []);
+    if(!items.length) return '<div class="small-note">No client submissions yet.</div>';
+    return `<div class="client-submission-list team-submission-list">${items.map(clientSubmissionCard).join('')}</div>`;
   }
 
   function clientStageSummaryCard(stage,tasks){
@@ -362,7 +446,7 @@
     const range = stageDateRange(items);
     const current = items.find(isTodayInTask);
     const next = items.filter(t=>t.status!=='Complete').sort((a,b)=>dateVal(a.endDate)-dateVal(b.endDate))[0];
-    return `<article class="client-stage-summary-card ${current?'current-stage':''}"><div class="stage-summary-top"><strong>${esc(stage)}</strong><span>${pct(progress)}</span></div><div class="client-progress-bar"><span style="width:${Math.max(0,Math.min(100,progress))}%"></span></div><p>${items.length} steps | ${open} open | ${range}</p>${current?`<em>Currently here today: ${esc(current.title)}</em>`:next?`<em>Next: ${esc(next.title)}</em>`:`<em>Stage complete</em>`}</article>`;
+    return `<article class="client-stage-summary-card ${current?'current-stage':''}"><div class="stage-summary-top"><strong>${esc(stage)}</strong><span>${pct(progress)}</span></div><div class="client-progress-bar"><span style="width:${Math.max(0,Math.min(100,progress))}%"></span></div><p>${items.length} steps | ${open} open</p>${current?`<em>Today: ${esc(current.title)}</em>`:next?`<em>Next: ${esc(next.title)}</em>`:`<em>Complete</em>`}</article>`;
   }
 
   function clientStageAccordion(stage,tasks,index){
@@ -370,11 +454,11 @@
     const progress = taskPct(items);
     const open = items.filter(t=>t.status!=='Complete').length;
     const current = items.some(isTodayInTask);
-    return `<details class="client-stage-dropdown" ${current||index===0?'open':''}><summary><div><strong>${esc(stage)}</strong><span>${items.length} steps | ${open} open | ${stageDateRange(items)}</span></div><div class="summary-right"><span class="stage-progress-pill">${pct(progress)}</span>${current?'<span class="today-pill">Currently here today</span>':''}</div></summary><div class="client-step-list">${items.map((t,i)=>clientStepRow(t,i)).join('')}</div></details>`;
+    return `<details class="client-stage-dropdown" ${current||index===0?'open':''}><summary><div><strong>${esc(stage)}</strong><span>${items.length} steps | ${open} open</span></div><div class="summary-right"><span class="stage-progress-pill">${pct(progress)}</span>${current?'<span class="today-pill">Currently here today</span>':''}</div></summary><div class="client-step-list">${items.map((t,i)=>clientStepRow(t,i)).join('')}</div></details>`;
   }
 
   function clientStepRow(t,i){
-    return `<article class="client-step-row ${isTodayInTask(t)?'is-current':''}"><div class="step-index">${i+1}</div><div class="step-body"><div class="step-title-row"><h3>${esc(t.title)}</h3><span class="badge ${statusClass(t.status)}">${esc(t.status)}</span></div><p>${esc(t.notes)}</p><div class="step-meta"><span>${esc(t.category)}</span><span>${esc(t.owner)}</span><span>${fmtShortDate(t.startDate)} - ${fmtShortDate(t.endDate)}</span>${isTodayInTask(t)?'<span class="today-inline">Currently here today</span>':''}</div></div></article>`;
+    return `<article class="client-step-row ${isTodayInTask(t)?'is-current':''}"><div class="step-index">${i+1}</div><div class="step-body"><div class="step-title-row"><h3>${esc(t.title)}</h3><span class="badge ${statusClass(t.status)}">${esc(t.status)}</span></div><div class="step-meta"><span>${esc(t.owner)}</span><span>${fmtShortDate(t.startDate)} - ${fmtShortDate(t.endDate)}</span>${isTodayInTask(t)?'<span class="today-inline">Currently here today</span>':''}</div></div></article>`;
   }
 
   function clientBudgetRows(){
