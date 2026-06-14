@@ -5,24 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Team Portal | E2E STR</title>
   <meta name="robots" content="noindex,nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:wght@300;400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 </head>
 <body data-page="team">
   <header class="site-nav app-nav">
-    <a class="brand" href="index.html"><span>E2E</span><strong>E2E STR</strong></a>
+    <a class="brand" href="index.html">E2E STR</a>
     <nav>
+      <a href="index.html">Home</a>
       <a href="client.html">Client View</a>
       <a href="projects-admin.html">Projects Admin</a>
       <button id="resetDemo" class="small-button">Reset Demo</button>
     </nav>
+    <a class="nav-cta" href="portal.html">Book now</a>
   </header>
+
   <main class="app-shell">
     <section id="login" class="login-card">
       <p class="eyebrow">Team Portal</p>
       <h1>Internal Launch OS</h1>
       <p>Demo password: <strong>team</strong></p>
-      <form id="loginForm"><input id="password" type="password" placeholder="Enter team password" /><button class="button primary">Open</button></form>
+      <form id="loginForm">
+        <input id="password" type="password" placeholder="Enter team password" />
+        <button class="button primary">Open</button>
+      </form>
     </section>
 
     <section id="app" class="hidden">
