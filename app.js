@@ -180,6 +180,7 @@
   function purchaseTotals(){ const total=state.purchases.reduce((s,p)=>s+num(p.price)*Math.max(1,num(p.qty)),0); const delivered=state.purchases.filter(p=>p.status==='Delivered').length; return {total,delivered,count:state.purchases.length}; }
   function renderKpis(page){
     const tasks=visibleTasks(page); const budget=budgetTotals(); const days=daysBetween(addDays(0),state.project.targetLaunchDate); const blocked=tasks.filter(t=>t.status==='Blocked').length;
+    if(!$('#kpis')) return;
     $('#kpis').innerHTML = [
       kpi('Launch Progress', pct(taskPct(tasks)), 'Tasks complete'),
       kpi('Today', new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}), 'Currently here today'),
