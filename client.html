@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Client Portal | E2E STR</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+</head>
+<body data-page="client">
+  <header class="site-nav app-nav">
+    <a class="brand" href="index.html"><span>E2E</span><strong>E2E STR</strong></a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="team.html">Team Portal</a>
+      <button id="lockPortal" class="small-button" type="button">Lock</button>
+    </nav>
+  </header>
+
+  <main class="app-shell client-shell">
+    <section id="login" class="login-card">
+      <p class="eyebrow">Client Portal</p>
+      <h1>Project Status</h1>
+      <p>Demo password: <strong>client</strong></p>
+      <form id="loginForm">
+        <input id="password" type="password" placeholder="Enter client password" />
+        <button class="button primary" type="submit">Open</button>
+      </form>
+    </section>
+
+    <section id="app" class="hidden">
+      <div class="app-header client-app-header">
+        <div>
+          <p class="eyebrow">Client Dashboard</p>
+          <h1 id="projectName"></h1>
+          <p id="projectSubtitle"></p>
+        </div>
+      </div>
+
+      <div id="kpis" class="kpi-grid"></div>
+
+      <section class="panel client-needs-panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Action needed first</p>
+            <h2>What we need from you</h2>
+            <p>These are the owner/client decisions, approvals, or access items blocking the next phase of the launch.</p>
+          </div>
+        </div>
+        <div id="clientNeeds" class="client-needs-grid"></div>
+      </section>
+
+      <section class="panel client-stage-overview-panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Stage overview</p>
+            <h2>Summary progress by stage</h2>
+            <p>Collapsed summary of where each part of the E2E STR workflow stands today.</p>
+          </div>
+        </div>
+        <div id="clientStageSummary" class="client-stage-summary-grid"></div>
+      </section>
+
+      <div class="client-portal-layout">
+        <aside class="portal-tabs client-tabs" aria-label="Client portal tabs">
+          <button class="tab-button active" data-client-tab="timeline" type="button">Timeline</button>
+          <button class="tab-button" data-client-tab="budget" type="button">Budget</button>
+          <button class="tab-button" data-client-tab="furnishing" type="button">Furnishing</button>
+          <button class="tab-button" data-client-tab="security" type="button">Security & Utilities</button>
+          <button class="tab-button" data-client-tab="inspection" type="button">Guest-Ready</button>
+          <button class="tab-button" data-client-tab="details" type="button">Project Details</button>
+        </aside>
+
+        <div class="portal-content client-content">
+          <section id="client-tab-timeline" class="tab-section active">
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Step-by-step launch timeline</h2>
+                  <p>Each stage is collapsible. The blue marker in the Gantt chart shows <strong>Currently here today</strong>.</p>
+                </div>
+              </div>
+              <div id="clientStageAccordions" class="client-stage-accordions"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Gantt chart</h2>
+                  <p>Client-visible milestones only. Internal vendor details remain in the team portal.</p>
+                </div>
+              </div>
+              <div id="gantt"></div>
+            </section>
+          </section>
+
+          <section id="client-tab-budget" class="tab-section">
+            <section class="panel">
+              <div class="panel-header"><div><h2>Budget summary</h2><p>High-level client budget view. Detailed line-item editing remains in the team portal.</p></div></div>
+              <div id="clientBudget" class="cards four no-margin"></div>
+              <div id="clientBudgetByCategory" class="client-list-table"></div>
+            </section>
+          </section>
+
+          <section id="client-tab-furnishing" class="tab-section">
+            <section class="panel">
+              <div class="panel-header"><div><h2>Furnishing and orders</h2><p>Room-by-room furnishing and major purchase status.</p></div></div>
+              <div id="clientFurnishing" class="client-card-list"></div>
+            </section>
+          </section>
+
+          <section id="client-tab-security" class="tab-section">
+            <section class="panel">
+              <div class="panel-header"><div><h2>Security and utilities</h2><p>Post-closing safety systems and account activation status.</p></div></div>
+              <div id="clientSecurityUtilities" class="client-split-grid"></div>
+            </section>
+          </section>
+
+          <section id="client-tab-inspection" class="tab-section">
+            <section class="panel">
+              <div class="panel-header"><div><h2>Guest-ready checklist</h2><p>Final inspection items before listing and guest handoff.</p></div></div>
+              <div id="clientInspection" class="client-card-list"></div>
+            </section>
+          </section>
+
+          <section id="client-tab-details" class="tab-section">
+            <section class="panel">
+              <div class="panel-header"><div><h2>Project details</h2><p>Core property and launch information.</p></div></div>
+              <div id="clientDetails" class="client-details-grid"></div>
+            </section>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

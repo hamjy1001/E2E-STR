@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Team Portal | E2E STR</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+</head>
+<body data-page="team">
+  <header class="site-nav app-nav">
+    <a class="brand" href="index.html"><span>E2E</span><strong>E2E STR</strong></a>
+    <nav>
+      <a href="client.html">Client View</a>
+      <a href="projects-admin.html">Projects Admin</a>
+      <button id="resetDemo" class="small-button">Reset Demo</button>
+    </nav>
+  </header>
+  <main class="app-shell">
+    <section id="login" class="login-card">
+      <p class="eyebrow">Team Portal</p>
+      <h1>Internal Launch OS</h1>
+      <p>Demo password: <strong>team</strong></p>
+      <form id="loginForm"><input id="password" type="password" placeholder="Enter team password" /><button class="button primary">Open</button></form>
+    </section>
+
+    <section id="app" class="hidden">
+      <div class="app-header">
+        <div><p class="eyebrow">Internal Command Center</p><h1 id="projectName"></h1><p id="projectSubtitle"></p></div>
+        <button id="lockPortal" class="button secondary">Lock</button>
+      </div>
+      <div id="kpis" class="kpi-grid"></div>
+
+      <div class="portal-layout">
+        <aside class="portal-tabs" aria-label="Team portal sections">
+          <button class="tab-button active" data-tab="overview">Overview</button>
+          <button class="tab-button" data-tab="timeline">Timeline + Gantt</button>
+          <button class="tab-button" data-tab="budget">Budget</button>
+          <button class="tab-button" data-tab="furnishing">Furnishing</button>
+          <button class="tab-button" data-tab="vendors">Vendors</button>
+          <button class="tab-button" data-tab="checklists">Checklists</button>
+          <button class="tab-button" data-tab="metrics">Metrics / Case Study</button>
+          <button class="tab-button" data-tab="data">Data / Export</button>
+        </aside>
+        <div class="portal-content">
+          <section id="tab-overview" class="tab-section active"></section>
+          <section id="tab-timeline" class="tab-section"></section>
+          <section id="tab-budget" class="tab-section"></section>
+          <section id="tab-furnishing" class="tab-section"></section>
+          <section id="tab-vendors" class="tab-section"></section>
+          <section id="tab-checklists" class="tab-section"></section>
+          <section id="tab-metrics" class="tab-section"></section>
+          <section id="tab-data" class="tab-section"></section>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

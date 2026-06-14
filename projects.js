@@ -1,0 +1,15 @@
+(function(){
+  const KEY='e2eSTR.projects.v1';
+  const blank=()=>({publish:false,title:'',market:'',property:'',budget:'',days:'',result:''});
+  const load=()=>{try{return JSON.parse(localStorage.getItem(KEY))||Array.from({length:5},blank)}catch(e){return Array.from({length:5},blank)}};
+  const save=p=>localStorage.setItem(KEY,JSON.stringify(p));
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let projects=load(); while(projects.length<5)projects.push(blank()); projects=projects.slice(0,5);
+  function renderCards(){const el=document.getElementById('projects'); if(!el)return; const pub=projects.filter(p=>p.publish&&(p.title||p.market||p.result)); el.innerHTML=pub.length?pub.map(p=>`<article class="project-card"><p class="eyebrow">${esc(p.market||'Market TBD')}</p><h3>${esc(p.title||'Finished Project')}</h3><p><strong>${esc(p.property||'Property type')}</strong></p><p>Budget: ${esc(p.budget||'TBD')} | Launch days: ${esc(p.days||'TBD')}</p><p>${esc(p.result||'Add project result.')}</p></article>`).join(''):'<article class="project-card"><h3>No published projects yet.</h3><p class="small-note">Open Projects Admin and mark projects as publish.</p></article>';}
+  function renderForms(){const el=document.getElementById('projectForms'); if(!el)return; el.innerHTML=projects.map((p,i)=>`<section class="panel"><h2>Project ${i+1}</h2><div class="cards four"><label>Publish<br><select data-i="${i}" data-k="publish"><option value="false" ${!p.publish?'selected':''}>No</option><option value="true" ${p.publish?'selected':''}>Yes</option></select></label><label>Title<br><input data-i="${i}" data-k="title" value="${esc(p.title)}"></label><label>Market<br><input data-i="${i}" data-k="market" value="${esc(p.market)}"></label><label>Property<br><input data-i="${i}" data-k="property" value="${esc(p.property)}"></label><label>Budget<br><input data-i="${i}" data-k="budget" value="${esc(p.budget)}"></label><label>Launch Days<br><input data-i="${i}" data-k="days" value="${esc(p.days)}"></label><label>Result<br><input data-i="${i}" data-k="result" value="${esc(p.result)}"></label></div></section>`).join(''); el.querySelectorAll('[data-k]').forEach(x=>x.addEventListener('input',update)); el.querySelectorAll('select[data-k]').forEach(x=>x.addEventListener('change',update));}
+  function update(e){const i=+e.target.dataset.i,k=e.target.dataset.k; projects[i][k]=k==='publish'?e.target.value==='true':e.target.value; save(projects);} 
+  document.getElementById('saveProjects')?.addEventListener('click',()=>{save(projects);alert('Saved in this browser.');});
+  document.getElementById('resetProjects')?.addEventListener('click',()=>{if(confirm('Reset projects?')){localStorage.removeItem(KEY);location.reload();}});
+  document.getElementById('exportProjects')?.addEventListener('click',()=>{const b=new Blob([JSON.stringify(projects,null,2)],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='e2e-str-finished-projects.json';a.click();URL.revokeObjectURL(u);});
+  renderCards(); renderForms();
+})();
