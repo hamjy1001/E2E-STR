@@ -32,3 +32,294 @@ td .small-button{padding:8px 10px;font-size:12px;color:#0f172a;background:#fff}
 .client-upload-grid{grid-template-columns:240px minmax(0,1fr) 240px auto;align-items:end}
 .client-upload-grid .wide{grid-column:auto}.client-upload-grid textarea{min-height:56px}.client-file-field input{padding:10px;background:#f8fafc}.client-submit-button{height:46px;white-space:nowrap}.client-submission-list{display:grid;gap:10px;margin:0 0 16px}.client-submission-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 8px 18px rgba(15,23,42,.04)}.client-submission-card>div{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.client-submission-card strong{display:block;color:var(--dark);letter-spacing:-.02em}.client-submission-card span{color:var(--muted);font-size:12px;font-weight:900}.client-submission-card p{margin:8px 0 0;color:#475569;line-height:1.45}.client-submission-card ul{margin:8px 0 0;padding-left:18px;color:#475569}.client-submission-card a{color:#2563eb;font-weight:900}.client-submission-card button{margin-top:10px}.client-submit-empty{margin-bottom:14px}.team-submission-list{margin:0}.client-needs-panel .panel-header p,.client-stage-overview-panel .panel-header p,.client-content .panel-header p{font-size:14px;line-height:1.4}.client-step-row .step-meta{margin-top:10px}.client-stage-summary-card p{font-size:12px}.client-need-card p{font-size:14px;line-height:1.4}
 @media(max-width:1100px){.client-upload-grid{grid-template-columns:1fr}.client-upload-grid .wide{grid-column:1/-1}.client-submit-button{width:100%}}
+
+/* ─── Landing page redesign ─────────────────────────────────────── */
+body.landing {
+  margin: 0;
+  background: #fff;
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  color: #111;
+}
+
+body.landing .site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px clamp(20px, 5vw, 64px);
+  background: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  backdrop-filter: none;
+}
+
+body.landing .brand {
+  font-family: 'Cormorant Garant', Georgia, serif;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: #111;
+  text-decoration: none;
+  display: block;
+}
+body.landing .brand span { display: none; }
+
+body.landing .site-nav nav {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+body.landing .site-nav nav a {
+  font-size: 14px;
+  font-weight: 400;
+  color: #111;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+body.landing .site-nav nav a:hover { text-decoration: underline; }
+
+.nav-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #111;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 22px;
+  border-radius: 999px;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+.nav-cta:hover { background: #333; }
+
+/* Page wrapper */
+.page-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 5vw, 64px);
+}
+
+/* Hero */
+.hero-full {
+  width: 100%;
+  height: 90vh;
+  min-height: 520px;
+  background: #2a2420;
+  background-image: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45));
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 clamp(20px, 5vw, 64px) 80px;
+}
+.hero-inner {
+  width: 100%;
+  max-width: 1200px;
+}
+.hero-full h1 {
+  font-family: 'Cormorant Garant', Georgia, serif;
+  font-size: clamp(52px, 8vw, 110px);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin: 0;
+}
+
+/* Split section */
+.split-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+  padding-top: 100px;
+  padding-bottom: 100px;
+}
+.placeholder-img {
+  background: #e8e3dc;
+  border-radius: 4px;
+}
+.split-img.placeholder-img {
+  height: 520px;
+}
+.split-content h2 {
+  font-family: 'Cormorant Garant', Georgia, serif;
+  font-size: clamp(36px, 4vw, 58px);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  margin: 0 0 24px;
+  color: #111;
+}
+.split-content p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #444;
+  margin: 0 0 32px;
+  max-width: 420px;
+}
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #111;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 400;
+  padding: 14px 36px;
+  border-radius: 999px;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+}
+.pill-btn:hover { background: #333; }
+
+/* Services */
+.services-section {
+  padding-top: 100px;
+  padding-bottom: 100px;
+  border-top: 1px solid #e5e5e5;
+}
+.section-heading {
+  font-family: 'Cormorant Garant', Georgia, serif;
+  font-size: clamp(36px, 4vw, 56px);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin: 0 0 64px;
+  color: #111;
+}
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-top: 1px solid #e5e5e5;
+}
+.service-item {
+  padding: 48px 40px 48px 0;
+  border-right: 1px solid #e5e5e5;
+}
+.service-item:last-child {
+  border-right: none;
+  padding-right: 0;
+  padding-left: 40px;
+}
+.service-item:nth-child(2) {
+  padding-left: 40px;
+}
+.service-item h3 {
+  font-family: 'Cormorant Garant', Georgia, serif;
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 20px;
+  color: #111;
+}
+.service-item p {
+  font-size: 15px;
+  line-height: 1.65;
+  color: #444;
+  margin: 0 0 24px;
+}
+.text-link {
+  font-size: 15px;
+  color: #111;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.text-link:hover { color: #555; }
+
+/* Consultation */
+.consult-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+  padding-top: 100px;
+  padding-bottom: 100px;
+  border-top: 1px solid #e5e5e5;
+}
+.consult-left h2 {
+  font-family: 'Cormorant Garant', Georgia, serif;
+  font-size: clamp(36px, 4vw, 56px);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  margin: 0 0 20px;
+  color: #111;
+}
+.consult-left p {
+  font-size: 15px;
+  line-height: 1.65;
+  color: #444;
+  margin: 0 0 32px;
+}
+.consult-img.placeholder-img {
+  height: 380px;
+}
+.appt-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111;
+  letter-spacing: 0.04em;
+  margin: 0 0 20px;
+}
+.appt-list {
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.appt-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 24px;
+  border-bottom: 1px solid #e5e5e5;
+}
+.appt-item:last-child { border-bottom: none; }
+.appt-item strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 4px;
+}
+.appt-item span {
+  display: block;
+  font-size: 14px;
+  color: #666;
+}
+.book-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #111;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 10px 20px;
+  border-radius: 2px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.book-btn:hover { background: #333; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .split-section,
+  .consult-section {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .split-img.placeholder-img { height: 300px; }
+  .services-grid { grid-template-columns: 1fr; }
+  .service-item,
+  .service-item:last-child,
+  .service-item:nth-child(2) {
+    padding: 32px 0;
+    border-right: none;
+    border-bottom: 1px solid #e5e5e5;
+  }
+  body.landing .site-nav nav { gap: 16px; }
+}
