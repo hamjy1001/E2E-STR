@@ -355,7 +355,13 @@
   }
 
   function renderDataTab(){
-    $('#tab-data').innerHTML=`<section class="panel"><div class="panel-header"><div><h2>Data / Export</h2><p>Export the full portal state or selected workflow tables. This static MVP stores data in this browser.</p></div></div><div class="button-row"><button id="exportJson" class="button primary">Export Full JSON</button><button id="exportTasks" class="button secondary">Export Tasks CSV</button><button id="exportBudget" class="button secondary">Export Budget CSV</button><button id="exportVendors" class="button secondary">Export Vendors CSV</button></div><pre class="code-box">${esc(JSON.stringify(state,null,2))}</pre></section>`;
+    const subs = (() => { try { return JSON.parse(localStorage.getItem('e2eSTR.subscribers')) || []; } catch(e){ return []; } })();
+    const subRows = subs.length
+      ? subs.map((s,i)=>`<tr><td>${esc(s.email)}</td><td>${esc(s.step||'—')}</td><td>${s.date ? new Date(s.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'}</td></tr>`).join('')
+      : `<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:18px">No subscribers captured yet.</td></tr>`;
+    $('#tab-data').innerHTML=`
+      <section class="panel"><div class="panel-header"><div><h2>Email Subscribers</h2><p>${subs.length} email${subs.length!==1?'s':''} captured via the guide unlock flow on the home page.</p></div><button id="exportSubscribers" class="button secondary">Export CSV</button></div><div class="table-wrap"><table>${tableHead(['Email','Guide / Step','Captured Date'])}<tbody>${subRows}</tbody></table></div></section>
+      <section class="panel"><div class="panel-header"><div><h2>Data / Export</h2><p>Export the full portal state or selected workflow tables. This static MVP stores data in this browser.</p></div></div><div class="button-row"><button id="exportJson" class="button primary">Export Full JSON</button><button id="exportTasks" class="button secondary">Export Tasks CSV</button><button id="exportBudget" class="button secondary">Export Budget CSV</button><button id="exportVendors" class="button secondary">Export Vendors CSV</button></div><pre class="code-box">${esc(JSON.stringify(state,null,2))}</pre></section>`;
   }
 
   function renderClient(){
@@ -603,6 +609,7 @@
     $('#addTask') && ($('#addTask').onclick=()=>{state.tasks.push(task('N'+Date.now(),'New Task','Operations Launch','Operations','E2E Team',0,7,'Not Started','')); save(); render('team');});
     $('#resetTimeline') && ($('#resetTimeline').onclick=()=>{ if(confirm('Restore the default acquisition/setup/security/operations timeline?')){ state.tasks=defaultState().tasks; save(); render('team'); } });
     $('#exportJson') && ($('#exportJson').onclick=()=>download(JSON.stringify(state,null,2),'e2e-str-full-portal.json','application/json'));
+    $('#exportSubscribers') && ($('#exportSubscribers').onclick=()=>{ try{ const s=JSON.parse(localStorage.getItem('e2eSTR.subscribers')||'[]'); download(toCsv(s),'e2e-str-subscribers.csv','text/csv'); }catch(e){} });
     $('#exportTasks') && ($('#exportTasks').onclick=()=>download(toCsv(state.tasks),'e2e-str-tasks.csv','text/csv'));
     $('#exportBudget') && ($('#exportBudget').onclick=()=>download(toCsv(state.budget),'e2e-str-budget.csv','text/csv'));
     $('#exportVendors') && ($('#exportVendors').onclick=()=>download(toCsv(state.vendors),'e2e-str-vendors.csv','text/csv'));

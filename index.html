@@ -45,6 +45,9 @@
         <h1>Heard of the STR loophole with bonus depreciation?</h1>
         <p class="hero-hook">Most high-income professionals miss out because the short-term rental has to be <em>actively managed</em> and set up correctly from day one. We coordinate the entire process — acquisition to first guest — so the strategy actually works.</p>
         <a href="services.html" class="pill-btn">Get Started &rarr;</a>
+        <div class="hero-photo">
+          <img src="images/step1-search.jpeg" alt="STR market search" />
+        </div>
         <div class="hero-trust">
           <span>12+ properties launched</span>
           <span class="trust-dot">&middot;</span>
@@ -164,7 +167,9 @@
       <div class="consult-left">
         <h2>Reserve a Private Consultation</h2>
         <p>Engage with a licensed advisor to evaluate your objectives, timeline, and tax strategy fit.</p>
-        <div class="consult-img placeholder-img"></div>
+        <div class="consult-img">
+          <img src="images/team.jpeg" alt="E2E STR team" />
+        </div>
       </div>
       <div class="consult-right">
         <p class="appt-label">&#9633; Select Appointment</p>
@@ -225,27 +230,76 @@
     </div>
   </footer>
 
+  <!-- EmailJS — free email sending (cdn.emailjs.com) -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="auth.js"></script>
   <script>
+  /* ─────────────────────────────────────────────────────────────────
+   * EmailJS config — fill these in after setting up your account at
+   * https://www.emailjs.com  (free tier: 200 emails/month)
+   *
+   * Steps:
+   *  1. Sign up at emailjs.com
+   *  2. Add Email Service (Gmail recommended) → copy the Service ID
+   *  3. Create Email Template → copy the Template ID
+   *     Template variables used: {{to_email}}, {{step_number}},
+   *     {{step_title}}, {{step_body}}, {{download_url}}
+   *  4. Go to Account → copy your Public Key
+   *  5. Paste all three below and save.
+   * ───────────────────────────────────────────────────────────────── */
+  var EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // e.g. 'abc123XYZ'
+  var EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // e.g. 'service_gmail'
+  var EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // e.g. 'template_str_guide'
+
+  var REPO_BASE = 'https://github.com/hamjy1001/E2E-STR/raw/main/';
+
+  /* Per-step content sent in the email body */
+  var STEP_EMAIL_DATA = {
+    'Step2_Mortgage_Guide_Busy_Professionals.docx': {
+      number: '02', title: 'Mortgage Guide for Busy Professionals',
+      body: "Most W-2 investors overpay on their investment mortgage by $200–$400/month — simply because they didn't shop lenders the right way.\n\nStep 2 covers DSCR loans, the lender tournament strategy, and exactly what levers move your rate. It's the kind of detail your bank rep will never walk you through unprompted.\n\nWe handle all of this for you. While you're reviewing the guide, imagine never having to make a single call to a lender yourself — that's what working with E2E STR looks like."
+    },
+    'Step3_STR_Property_Setup_Guide.docx': {
+      number: '03', title: 'STR Property Setup Guide',
+      body: "The most common post-launch disasters — lockouts, failed inspections, insurance claim denials — almost always trace back to setup shortcuts taken in the first two weeks after closing.\n\nStep 3 is our 9-point pre-go-live walkthrough: smart locks, mesh WiFi, fire code compliance, leak sensors, and a 48-hour dry run before the first guest checks in.\n\nNot your idea of a fun weekend project? It's not ours either — which is why we coordinate every single piece of it for you."
+    },
+    'Step4_STR_FurniturePlan_Guide.docx': {
+      number: '04', title: 'STR Furniture Plan Guide',
+      body: "Furnishing a short-term rental yourself takes most investors 45–60 hours and often costs twice what it should. Our sourcing approach delivers the same item list for roughly half the retail price — and we coordinate receiving, damage inspection, and a single bundled assembly crew so you're not managing six different deliveries.\n\nStep 4 is the full room-by-room breakdown with dual pricing so you can see exactly where the savings come from.\n\nOr, you know — let us just handle it."
+    },
+    'Step5_STR_Permit_Processing_Guide.docx': {
+      number: '05', title: 'STR Permit Processing Guide',
+      body: "Permit rules are set city-by-city, not state-wide. A property that can't legally operate as an STR in its zone is a completely different asset than the one you thought you were buying.\n\nStep 5 walks through four real markets — Phoenix, LA, South Lake Tahoe, and Oahu — so you understand the range of what you're navigating. Some markets are simple. Some require neighbor notices, insurance binders, and annual renewal windows you can't miss.\n\nWe've filed permits in all of them. You shouldn't have to figure this out alone."
+    },
+    'Step6_STR_Final_Listing_Guide.docx': {
+      number: '06', title: 'Final Listing Launch Guide',
+      body: "Two identical properties, listed differently, can show a 30%+ gap in occupancy and nightly rate in their first 90 days. The cover photo, the listing title, the amenity checkboxes — every detail matters more than most investors realize.\n\nStep 6 is our full launch playbook: photography shot list, listing optimization by platform, pricing strategy, and ongoing management options starting at 12% of revenue.\n\nIf reading this makes you want someone else to handle it — that's exactly why we built this service."
+    }
+  };
+
   (function(){
-    // Email modal logic
-    var modal = document.getElementById('emailModal');
-    var closeBtn = document.getElementById('modalClose');
-    var form = document.getElementById('emailCaptureForm');
+    // Init EmailJS
+    if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+      emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+    }
+
+    var modal      = document.getElementById('emailModal');
+    var closeBtn   = document.getElementById('modalClose');
+    var form       = document.getElementById('emailCaptureForm');
     var emailInput = document.getElementById('captureEmail');
-    var hrefInput = document.getElementById('modalDownloadHref');
-    var titleEl = document.getElementById('modalStepTitle');
-    var errorEl = document.getElementById('emailError');
+    var hrefInput  = document.getElementById('modalDownloadHref');
+    var titleEl    = document.getElementById('modalStepTitle');
+    var errorEl    = document.getElementById('emailError');
+    var submitBtn  = form.querySelector('button[type="submit"]');
 
     document.querySelectorAll('.step-dl-btn.locked').forEach(function(btn){
       btn.addEventListener('click', function(){
-        var href = btn.getAttribute('data-href');
+        var href  = btn.getAttribute('data-href');
         var title = btn.getAttribute('data-title') || 'This Guide';
         hrefInput.value = href;
         titleEl.textContent = 'Unlock: ' + title;
         errorEl.classList.add('hidden');
         emailInput.value = '';
-        // Reset to form view in case confirm was shown previously
         form.classList.remove('hidden');
         document.getElementById('modalConfirm').classList.add('hidden');
         modal.classList.remove('hidden');
@@ -266,19 +320,50 @@
         return;
       }
       errorEl.classList.add('hidden');
-      // Persist email (demo — in production, POST to your CRM/Mailchimp)
-      try{
+
+      // Save to subscriber list
+      try {
         var list = JSON.parse(localStorage.getItem('e2eSTR.subscribers') || '[]');
-        var already = list.some(function(s){ return s.email === email; });
-        if(!already) list.push({ email: email, step: hrefInput.value, date: new Date().toISOString() });
-        localStorage.setItem('e2eSTR.subscribers', JSON.stringify(list));
+        var stepFile = hrefInput.value;
+        if(!list.some(function(s){ return s.email === email && s.step === stepFile; })){
+          list.push({ email: email, step: stepFile, date: new Date().toISOString() });
+          localStorage.setItem('e2eSTR.subscribers', JSON.stringify(list));
+        }
       } catch(err){}
-      // Show confirmation — do NOT auto-download; team will send link via email
+
+      // Send email via EmailJS (skips if not configured yet)
+      var stepData = STEP_EMAIL_DATA[hrefInput.value];
+      if(stepData && typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY'){
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending…';
+        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+          to_email:     email,
+          step_number:  stepData.number,
+          step_title:   stepData.title,
+          step_body:    stepData.body,
+          download_url: REPO_BASE + hrefInput.value
+        }).then(function(){
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Send Me the Guide →';
+          showConfirm(email);
+        }, function(err){
+          console.error('EmailJS error:', err);
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Send Me the Guide →';
+          showConfirm(email); // still show confirm even if email fails
+        });
+      } else {
+        // EmailJS not configured — show confirm immediately
+        showConfirm(email);
+      }
+    });
+
+    function showConfirm(email){
       form.classList.add('hidden');
       var conf = document.getElementById('modalConfirm');
       conf.querySelector('.modal-confirm-email').textContent = email;
       conf.classList.remove('hidden');
-    });
+    }
   })();
   </script>
 
