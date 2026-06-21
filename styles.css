@@ -1290,6 +1290,102 @@ td input[type="number"] { min-width: 95px; }
   margin-top: 4px;
 }
 
+/* ─── Nav actions (Sign In + CTA side by side) ───────────────────── */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-signin {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dark);
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: border-color 0.15s, background 0.15s;
+}
+.nav-signin:hover { border-color: var(--dark); background: var(--soft); }
+.nav-signin--active { border-color: var(--dark); }
+
+/* ─── Modal confirm state ────────────────────────────────────────── */
+.modal-confirm { text-align: center; padding: 12px 0 4px; }
+.modal-confirm.hidden { display: none; }
+.modal-confirm-icon {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: #dcfce7; color: #166534; font-size: 22px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px;
+}
+.modal-confirm-heading { font-family: var(--font-serif); font-size: 26px; font-weight: 400; margin: 0 0 12px; }
+.modal-confirm-body { font-size: 14px; color: var(--muted); line-height: 1.7; margin: 0; }
+
+/* ─── Auth page (login.html) ─────────────────────────────────────── */
+.auth-shell {
+  min-height: calc(100vh - 73px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 60px 20px; background: var(--soft);
+}
+.auth-card {
+  background: #fff; border: 1px solid var(--line); border-radius: 10px;
+  padding: 52px 52px 48px; width: 100%; max-width: 460px; box-shadow: var(--shadow);
+}
+.auth-card-head { margin-bottom: 32px; }
+.auth-title {
+  font-family: var(--font-serif); font-size: clamp(28px, 4vw, 38px);
+  font-weight: 400; margin: 10px 0 12px; letter-spacing: -0.02em; line-height: 1.1;
+}
+.auth-sub { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.6; }
+.auth-sub a { color: var(--dark); text-decoration: underline; }
+.auth-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.auth-field span {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--muted);
+}
+.auth-field input {
+  padding: 13px 16px; border: 1px solid var(--line); border-radius: 6px;
+  font: inherit; font-size: 15px; color: var(--dark); background: #fff;
+  transition: border-color 0.15s;
+}
+.auth-field input:focus { outline: none; border-color: var(--dark); }
+.auth-error {
+  font-size: 13px; color: #991b1b; background: #fef2f2;
+  border: 1px solid #fecaca; border-radius: 6px; padding: 10px 14px;
+  margin-bottom: 16px; line-height: 1.55;
+}
+.auth-error.hidden { display: none; }
+.auth-submit { width: 100%; margin-top: 4px; }
+.auth-divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 24px 0 16px; color: var(--muted); font-size: 12px;
+}
+.auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.auth-switch { font-size: 14px; color: var(--muted); margin: 0; text-align: center; }
+.auth-link-btn {
+  background: none; border: none; padding: 0; font: inherit;
+  font-size: 14px; color: var(--dark); cursor: pointer;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.auth-link-btn:hover { opacity: 0.7; }
+.auth-demo-note { font-size: 12px; color: var(--muted); margin: 16px 0 0; text-align: center; line-height: 1.6; }
+.auth-demo-note code {
+  background: var(--soft); padding: 2px 6px; border-radius: 4px;
+  font-size: 12px; border: 1px solid var(--line);
+}
+.auth-success-icon {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: #dcfce7; color: #166534; font-size: 26px;
+  display: flex; align-items: center; justify-content: center; margin: 0 0 20px;
+}
+.auth-redirect-note { font-size: 13px; color: var(--muted); margin: 24px 0 0; text-align: center; }
+@media (max-width: 520px) {
+  .auth-card { padding: 36px 24px 32px; }
+  .nav-actions { gap: 8px; }
+  .nav-signin { padding: 8px 14px; font-size: 13px; }
+}
+
 /* Package builder */
 .builder-section { padding: 0 0 100px; border-top: 1px solid var(--line); padding-top: 80px; }
 .builder-header { margin-bottom: 36px; }

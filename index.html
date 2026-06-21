@@ -29,7 +29,10 @@
       <a href="portal.html">Portal</a>
       <a href="mailto:hello@e2estr.com">Contact</a>
     </nav>
-    <a class="nav-cta" href="plans.html">Get Started</a>
+    <div class="nav-actions">
+      <a class="nav-signin" href="login.html">Sign In</a>
+      <a class="nav-cta" href="plans.html">Get Started</a>
+    </div>
   </header>
 
   <main>
@@ -194,8 +197,14 @@
       <form id="emailCaptureForm" novalidate>
         <input type="email" id="captureEmail" class="email-modal-input" placeholder="your@email.com" required autocomplete="email" />
         <p class="email-modal-error hidden" id="emailError">Please enter a valid email address.</p>
-        <button type="submit" class="button primary" style="width:100%;margin-top:12px;">Download &amp; Subscribe &rarr;</button>
+        <button type="submit" class="button primary" style="width:100%;margin-top:12px;">Send Me the Guide &rarr;</button>
       </form>
+      <div id="modalConfirm" class="modal-confirm hidden">
+        <div class="modal-confirm-icon">&#10003;</div>
+        <p class="modal-confirm-heading">You're on the list.</p>
+        <p class="modal-confirm-body">We'll send the download link to <strong class="modal-confirm-email"></strong> shortly. Keep an eye on your inbox.</p>
+        <button class="button primary" style="width:100%;margin-top:20px;" onclick="document.getElementById('emailModal').classList.add('hidden')">Got it</button>
+      </div>
       <input type="hidden" id="modalDownloadHref" value="" />
     </div>
   </div>
@@ -216,6 +225,7 @@
     </div>
   </footer>
 
+  <script src="auth.js"></script>
   <script>
   (function(){
     // Email modal logic
@@ -235,6 +245,9 @@
         titleEl.textContent = 'Unlock: ' + title;
         errorEl.classList.add('hidden');
         emailInput.value = '';
+        // Reset to form view in case confirm was shown previously
+        form.classList.remove('hidden');
+        document.getElementById('modalConfirm').classList.add('hidden');
         modal.classList.remove('hidden');
         setTimeout(function(){ emailInput.focus(); }, 80);
       });
@@ -256,17 +269,15 @@
       // Persist email (demo — in production, POST to your CRM/Mailchimp)
       try{
         var list = JSON.parse(localStorage.getItem('e2eSTR.subscribers') || '[]');
-        list.push({ email: email, date: new Date().toISOString() });
+        var already = list.some(function(s){ return s.email === email; });
+        if(!already) list.push({ email: email, step: hrefInput.value, date: new Date().toISOString() });
         localStorage.setItem('e2eSTR.subscribers', JSON.stringify(list));
       } catch(err){}
-      // Trigger download
-      var a = document.createElement('a');
-      a.href = hrefInput.value;
-      a.download = '';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      modal.classList.add('hidden');
+      // Show confirmation — do NOT auto-download; team will send link via email
+      form.classList.add('hidden');
+      var conf = document.getElementById('modalConfirm');
+      conf.querySelector('.modal-confirm-email').textContent = email;
+      conf.classList.remove('hidden');
     });
   })();
   </script>

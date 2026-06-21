@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign In | E2E STR</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:wght@300;400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+
+  <header class="site-nav">
+    <a class="brand" href="index.html">
+      <svg class="brand-mark" width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="34" height="34" rx="7" fill="#111"/>
+        <path d="M6 19L17 8L28 19" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10.5 17.5V27H15V21.5H19V27H23.5V17.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="17" cy="13" r="1.2" fill="white"/>
+      </svg>
+      E2E STR
+    </a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="plans.html">Plans</a>
+    </nav>
+    <a class="nav-signin nav-cta" href="login.html">Sign In</a>
+  </header>
+
+  <main class="auth-shell">
+
+    <!-- ── Sign In panel ─────────────────────────────────────────── -->
+    <div id="panelSignin" class="auth-card">
+      <div class="auth-card-head">
+        <p class="eyebrow">Client Access</p>
+        <h1 class="auth-title">Sign in to your<br>project portal</h1>
+        <p class="auth-sub">For existing E2E STR clients. Not a client yet? <a href="plans.html">View our plans.</a></p>
+      </div>
+
+      <form id="signinForm" novalidate>
+        <label class="auth-field">
+          <span>Email</span>
+          <input id="siEmail" type="email" placeholder="you@email.com" autocomplete="email" required />
+        </label>
+        <label class="auth-field">
+          <span>Password</span>
+          <input id="siPassword" type="password" placeholder="Your password" autocomplete="current-password" required />
+        </label>
+        <p id="siError" class="auth-error hidden"></p>
+        <button type="submit" class="button primary auth-submit">Sign In &rarr;</button>
+      </form>
+
+      <div class="auth-divider"><span>or</span></div>
+      <p class="auth-switch">New client? <button class="auth-link-btn" id="toSetup">Set up your account &rarr;</button></p>
+      <p class="auth-demo-note">Demo account: <code>demo@e2estr.com</code> / <code>client2024</code></p>
+    </div>
+
+    <!-- ── Set up password panel ──────────────────────────────────── -->
+    <div id="panelSetup" class="auth-card hidden">
+      <div class="auth-card-head">
+        <p class="eyebrow">First Time Here?</p>
+        <h1 class="auth-title">Set up your<br>account password</h1>
+        <p class="auth-sub">Enter the email address you received communications from us on, then choose a password.</p>
+      </div>
+
+      <form id="setupForm" novalidate>
+        <label class="auth-field">
+          <span>Email</span>
+          <input id="suEmail" type="email" placeholder="you@email.com" autocomplete="email" required />
+        </label>
+        <label class="auth-field">
+          <span>Choose a password</span>
+          <input id="suPassword" type="password" placeholder="At least 8 characters" autocomplete="new-password" required minlength="8" />
+        </label>
+        <label class="auth-field">
+          <span>Confirm password</span>
+          <input id="suConfirm" type="password" placeholder="Repeat password" autocomplete="new-password" required />
+        </label>
+        <p id="suError" class="auth-error hidden"></p>
+        <button type="submit" class="button primary auth-submit">Create Password &rarr;</button>
+      </form>
+
+      <p class="auth-switch"><button class="auth-link-btn" id="toSignin">&larr; Back to sign in</button></p>
+    </div>
+
+    <!-- ── Success panel ─────────────────────────────────────────── -->
+    <div id="panelSuccess" class="auth-card hidden">
+      <div class="auth-card-head">
+        <div class="auth-success-icon">&#10003;</div>
+        <h1 class="auth-title" id="successTitle">Welcome back</h1>
+        <p id="successMsg" class="auth-sub"></p>
+      </div>
+      <p id="successRedirect" class="auth-redirect-note">Redirecting you now&hellip;</p>
+    </div>
+
+  </main>
+
+  <script src="auth.js"></script>
+  <script>
+  (function () {
+    var panels = {
+      signin:  document.getElementById('panelSignin'),
+      setup:   document.getElementById('panelSetup'),
+      success: document.getElementById('panelSuccess')
+    };
+
+    function show(name) {
+      Object.keys(panels).forEach(function (k) {
+        panels[k].classList.toggle('hidden', k !== name);
+      });
+    }
+
+    /* ── Sign In ──────────────────────────────────────────────────── */
+    document.getElementById('signinForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email    = document.getElementById('siEmail').value.trim();
+      var password = document.getElementById('siPassword').value;
+      var errEl    = document.getElementById('siError');
+
+      var result = E2EAuth.login(email, password);
+
+      if (result.ok) {
+        var user = result.user;
+        document.getElementById('successTitle').textContent =
+          'Welcome' + (user.name ? ', ' + user.name.split(' ')[0] : '') + '.';
+
+        if (user.type === 'paying') {
+          document.getElementById('successMsg').textContent =
+            'Taking you to your project dashboard.';
+          show('success');
+          setTimeout(function () { window.location.href = 'client.html'; }, 1400);
+        } else {
+          document.getElementById('successMsg').textContent =
+            "You're on our list but don't have an active project yet. We're redirecting you to our plans page.";
+          show('success');
+          setTimeout(function () { window.location.href = 'plans.html'; }, 2200);
+        }
+        return;
+      }
+
+      errEl.classList.remove('hidden');
+      if (result.reason === 'no_account') {
+        errEl.textContent = "We don't have an account for that email. If you're a new client, check your onboarding email — or view our plans below.";
+      } else if (result.reason === 'needs_setup') {
+        errEl.textContent = 'This account hasn\'t been set up yet. Click "Set up your account" below to create your password.';
+      } else {
+        errEl.textContent = 'Incorrect password. Please try again.';
+      }
+    });
+
+    /* ── Password Setup ───────────────────────────────────────────── */
+    document.getElementById('setupForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email    = document.getElementById('suEmail').value.trim();
+      var pass     = document.getElementById('suPassword').value;
+      var confirm  = document.getElementById('suConfirm').value;
+      var errEl    = document.getElementById('suError');
+
+      if (pass.length < 8) {
+        errEl.textContent = 'Password must be at least 8 characters.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+      if (pass !== confirm) {
+        errEl.textContent = 'Passwords do not match.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      var user = E2EAuth.findUser(email);
+      if (!user) {
+        errEl.textContent = "We couldn't find an account for that email. If you're a new client, please check your onboarding email or contact us at hello@e2estr.com.";
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      E2EAuth.setPassword(email, pass);
+      E2EAuth.setSession(user);
+
+      document.getElementById('successTitle').textContent =
+        'Account created' + (user.name ? ', ' + user.name.split(' ')[0] : '') + '.';
+      document.getElementById('successMsg').textContent =
+        user.type === 'paying'
+          ? 'Your password is set. Taking you to your project dashboard.'
+          : "Your password is set. We'll redirect you to our plans page.";
+      show('success');
+      setTimeout(function () {
+        window.location.href = user.type === 'paying' ? 'client.html' : 'plans.html';
+      }, 1600);
+    });
+
+    /* ── Panel toggles ───────────────────────────────────────────── */
+    document.getElementById('toSetup').addEventListener('click',  function () { show('setup'); });
+    document.getElementById('toSignin').addEventListener('click', function () { show('signin'); });
+
+    /* ── If already logged in, skip straight through ─────────────── */
+    document.addEventListener('DOMContentLoaded', function () {
+      var session = E2EAuth.getSession();
+      if (session) {
+        window.location.href = session.type === 'paying' ? 'client.html' : 'plans.html';
+      }
+    });
+  })();
+  </script>
+
+</body>
+</html>

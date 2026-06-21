@@ -156,11 +156,52 @@
     const page = document.body.dataset.page;
     $('#resetDemo')?.addEventListener('click',()=>{if(confirm('Reset demo portal data?')){localStorage.removeItem(KEY); state=defaultState(); save(); render(page);}});
     if(!page) return;
-    const sessionKey = page === 'team' ? 'e2eTeam' : 'e2eClient';
-    const pass = page === 'team' ? TEAM_PASS : CLIENT_PASS;
-    if(sessionStorage.getItem(sessionKey)==='yes') showApp(page);
-    $('#loginForm')?.addEventListener('submit',e=>{e.preventDefault(); if($('#password').value.trim()===pass){sessionStorage.setItem(sessionKey,'yes'); showApp(page);} else alert('Wrong password. Try '+pass+'.');});
-    $('#lockPortal')?.addEventListener('click',()=>{sessionStorage.removeItem(sessionKey); location.reload();});
+
+    if(page === 'team'){
+      // Team portal keeps simple password auth
+      const sessionKey = 'e2eTeam';
+      if(sessionStorage.getItem(sessionKey)==='yes') showApp(page);
+      $('#loginForm')?.addEventListener('submit',e=>{
+        e.preventDefault();
+        if($('#password').value.trim()===TEAM_PASS){ sessionStorage.setItem(sessionKey,'yes'); showApp(page); }
+        else alert('Wrong password. Try: '+TEAM_PASS);
+      });
+      $('#lockPortal')?.addEventListener('click',()=>{ sessionStorage.removeItem(sessionKey); location.reload(); });
+      return;
+    }
+
+    if(page === 'client'){
+      // Client portal uses E2EAuth email+password session
+      const auth = window.E2EAuth;
+      const session = auth ? auth.getSession() : null;
+      if(session && session.type === 'paying'){ showApp(page); return; }
+      if(session && session.type !== 'paying'){ window.location.href='plans.html'; return; }
+
+      $('#loginForm')?.addEventListener('submit', e=>{
+        e.preventDefault();
+        if(!auth){ alert('Auth unavailable — reload page.'); return; }
+        const email = ($('#cpEmail')?.value||'').trim();
+        const password = ($('#cpPassword')?.value||'');
+        const errEl = $('#cpError');
+        const result = auth.login(email, password);
+        if(result.ok){
+          if(result.user.type === 'paying'){ showApp(page); }
+          else { window.location.href='plans.html'; }
+          return;
+        }
+        if(errEl){
+          errEl.style.display='block';
+          if(result.reason==='no_account') errEl.textContent="No account found for that email. Check your onboarding email or view our plans.";
+          else if(result.reason==='needs_setup') errEl.textContent="Account not set up yet — visit the sign-in page to create your password.";
+          else errEl.textContent="Incorrect password. Please try again.";
+        }
+      });
+
+      $('#lockPortal')?.addEventListener('click',()=>{
+        if(auth) auth.clearSession();
+        location.reload();
+      });
+    }
   }
 
   function showApp(page){ $('#login')?.classList.add('hidden'); $('#app')?.classList.remove('hidden'); render(page); }

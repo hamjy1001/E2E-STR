@@ -22,7 +22,10 @@
       <a href="team.html">Team Portal</a>
       <button id="lockPortal" class="small-button" type="button">Lock</button>
     </nav>
-    <a class="nav-cta" href="plans.html">Get Started</a>
+    <div class="nav-actions">
+      <a class="nav-signin" href="login.html">Sign In</a>
+      <a class="nav-cta" href="plans.html">Get Started</a>
+    </div>
   </header>
 
   <main class="app-shell client-shell">
@@ -31,12 +34,17 @@
     <section id="login" class="login-card">
       <p class="eyebrow">Client Portal</p>
       <h1>Your Project Status</h1>
-      <p>Enter your access code to view your project dashboard.</p>
-      <p style="color:var(--muted);font-size:13px;">Demo password: <strong>client</strong></p>
-      <form id="loginForm">
-        <input id="password" type="password" placeholder="Enter access code" />
-        <button class="button primary" type="submit">Open</button>
+      <p>Sign in with the email and password from your onboarding.</p>
+      <p style="color:var(--muted);font-size:13px;">Demo: <strong>demo@e2estr.com</strong> / <strong>client2024</strong></p>
+      <form id="loginForm" novalidate>
+        <input id="cpEmail" type="email" placeholder="your@email.com" autocomplete="email" required style="margin-bottom:10px;" />
+        <input id="cpPassword" type="password" placeholder="Password" autocomplete="current-password" required />
+        <p id="cpError" style="color:#991b1b;font-size:13px;margin:8px 0 0;display:none;"></p>
+        <button class="button primary" type="submit" style="margin-top:14px;">Open Portal</button>
       </form>
+      <p style="margin-top:16px;font-size:13px;color:var(--muted);">
+        First time? <a href="login.html#setup" style="color:var(--dark);text-decoration:underline;">Set up your password &rarr;</a>
+      </p>
     </section>
 
     <!-- App -->
@@ -82,6 +90,7 @@
 
   </main>
 
+  <script src="auth.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
