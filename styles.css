@@ -1282,3 +1282,332 @@ td input[type="number"] { min-width: 95px; }
   .builder-stage { min-width: auto; }
   .email-modal-card { padding: 32px 24px; }
 }
+
+/* ─── Services page (how-it-works) ──────────────────────────────── */
+.svc-hero {
+  padding: 80px 0 64px;
+  border-bottom: 1px solid var(--line);
+  max-width: 760px;
+}
+.svc-hero h1 { margin: 12px 0 20px; }
+.svc-hero-meta {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+/* Stage divider */
+.svc-stage-label {
+  padding: 48px 0 0;
+}
+.svc-stage-pill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 7px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  background: var(--soft);
+}
+.featured-stage {
+  border-color: var(--dark);
+  background: var(--dark);
+  color: #fff;
+}
+
+/* Step section */
+.svc-step {
+  padding: 56px 0 0;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 64px;
+}
+.svc-step-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 28px;
+  margin-bottom: 40px;
+}
+.svc-step-num {
+  font-family: var(--font-serif);
+  font-size: 56px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--line);
+  flex-shrink: 0;
+  min-width: 64px;
+}
+.svc-step-title {
+  font-family: var(--font-serif);
+  font-size: clamp(26px, 3vw, 38px);
+  font-weight: 400;
+  margin: 0 0 6px;
+  letter-spacing: -0.02em;
+}
+.svc-step-sub {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Peek grid */
+.svc-peek-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+.svc-peek-card {
+  padding: 28px 26px;
+  border-right: 1px solid var(--line);
+  transition: background 0.15s;
+}
+.svc-peek-card:last-child { border-right: none; }
+.svc-peek-card:hover { background: #fafaf9; }
+.svc-peek-icon {
+  font-size: 22px;
+  margin-bottom: 12px;
+  line-height: 1;
+}
+.svc-peek-card h4 {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 500;
+  margin: 0 0 10px;
+  letter-spacing: -0.01em;
+}
+.svc-peek-card p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Time savings row */
+.svc-time-save {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.svc-time-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  background: var(--soft);
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  text-decoration: line-through;
+  text-decoration-color: #ccc;
+}
+.svc-time-arrow { color: var(--muted); font-size: 14px; }
+.svc-time-e2e {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dark);
+  background: #f0fdf4;
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1px solid #bbf7d0;
+}
+
+/* CTA bar */
+.svc-cta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 24px 28px;
+  background: var(--soft);
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+.svc-cta-copy {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.65;
+  flex: 1;
+  min-width: 240px;
+}
+.svc-cta-copy strong { color: var(--dark); }
+.svc-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  background: var(--dark);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 999px;
+  text-decoration: none;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+.svc-cta-btn:hover { background: #333; }
+
+/* Bottom CTA band */
+.svc-bottom-cta {
+  background: var(--dark);
+  color: #fff;
+  padding: 88px 0;
+  margin-top: 0;
+}
+.svc-bottom-inner {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 60px;
+  align-items: center;
+}
+.svc-bottom-left .eyebrow { color: rgba(255,255,255,0.5); }
+.svc-bottom-left h2 {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 3.5vw, 48px);
+  font-weight: 400;
+  margin: 12px 0 16px;
+  letter-spacing: -0.02em;
+  color: #fff;
+  line-height: 1.1;
+}
+.svc-bottom-left p { font-size: 15px; color: rgba(255,255,255,0.65); line-height: 1.75; margin: 0; max-width: 520px; }
+.svc-bottom-right {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 260px;
+}
+.svc-bottom-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 32px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+.svc-bottom-btn.primary { background: #fff; color: var(--dark); }
+.svc-bottom-btn.primary:hover { background: #f0f0f0; }
+.svc-bottom-btn.secondary { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.35); }
+.svc-bottom-btn.secondary:hover { border-color: #fff; }
+
+/* ─── Consultation band (plans page) ───────────────────────────── */
+.consult-band {
+  padding: 80px 0 100px;
+  border-top: 1px solid var(--line);
+}
+.consult-band-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 72px;
+  align-items: start;
+}
+.consult-band-left h2 {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 400;
+  margin: 12px 0 16px;
+  letter-spacing: -0.02em;
+}
+.consult-band-left p {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.75;
+  margin: 0 0 24px;
+}
+.consult-band-points {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.consult-band-points li {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dark);
+}
+.consult-appt-card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.consult-appt-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 18px 24px 14px;
+  border-bottom: 1px solid var(--line);
+  margin: 0;
+  background: var(--soft);
+}
+.consult-appt-list { display: flex; flex-direction: column; }
+.consult-appt-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--line);
+  text-decoration: none;
+  color: var(--dark);
+  transition: background 0.15s;
+}
+.consult-appt-item:last-child { border-bottom: none; }
+.consult-appt-item:hover { background: #fafaf9; }
+.consult-appt-info { display: flex; flex-direction: column; gap: 3px; }
+.consult-appt-info strong { font-size: 15px; font-weight: 600; }
+.consult-appt-info span { font-size: 13px; color: var(--muted); }
+.consult-appt-arrow {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dark);
+  white-space: nowrap;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+.consult-appt-item:hover .consult-appt-arrow { opacity: 1; }
+.consult-appt-note {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 14px 24px;
+  border-top: 1px solid var(--line);
+  margin: 0;
+  background: var(--soft);
+}
+
+/* Services + plans responsive */
+@media (max-width: 1100px) {
+  .svc-peek-grid { grid-template-columns: repeat(2, 1fr); }
+  .svc-peek-card:nth-child(2) { border-right: none; }
+  .svc-peek-card:nth-child(1),
+  .svc-peek-card:nth-child(2) { border-bottom: 1px solid var(--line); }
+}
+@media (max-width: 768px) {
+  .svc-peek-grid { grid-template-columns: 1fr; }
+  .svc-peek-card { border-right: none; border-bottom: 1px solid var(--line); }
+  .svc-peek-card:last-child { border-bottom: none; }
+  .svc-step-header { gap: 16px; }
+  .svc-step-num { font-size: 36px; min-width: 44px; }
+  .svc-bottom-inner { grid-template-columns: 1fr; gap: 40px; }
+  .svc-bottom-right { min-width: auto; }
+  .consult-band-inner { grid-template-columns: 1fr; gap: 48px; }
+  .svc-cta-bar { flex-direction: column; align-items: flex-start; }
+}
