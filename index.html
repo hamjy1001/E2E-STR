@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>E2E STR | End-to-End STR Concierge</title>
-  <meta name="description" content="E2E STR helps out-of-state investors coordinate acquisition, compliance, furnishing, security, and operations-ready STR launch." />
+  <meta name="description" content="E2E STR coordinates the entire short-term rental launch process for out-of-state investors — from market selection to first guest." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:wght@300;400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
@@ -13,26 +13,114 @@
 <body class="landing">
 
   <header class="site-nav">
-    <a class="brand" href="index.html">E2E STR</a>
+    <a class="brand" href="index.html">
+      <svg class="brand-mark" width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="34" height="34" rx="7" fill="#111"/>
+        <path d="M6 19L17 8L28 19" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10.5 17.5V27H15V21.5H19V27H23.5V17.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="17" cy="13" r="1.2" fill="white"/>
+      </svg>
+      E2E STR
+    </a>
     <nav>
-      <a href="#services">Services</a>
+      <a href="services.html">Services</a>
       <a href="case-studies.html">Projects</a>
       <a href="portal.html">Portal</a>
       <a href="mailto:hello@e2estr.com">Contact</a>
     </nav>
-    <a class="nav-cta" href="portal.html">Book now</a>
+    <a class="nav-cta" href="services.html">Get Started</a>
   </header>
 
   <main>
 
-    <!-- Hero -->
-    <section class="hero-full">
-      <div class="hero-inner">
-        <h1>Strategic Short&#8209;Term<br>Rental Guidance</h1>
+    <!-- ── Hero: 2-column hook ───────────────────────────────────── -->
+    <section class="home-hero page-wrap">
+
+      <div class="hero-left">
+        <p class="eyebrow">For High-Income W-2 Investors</p>
+        <h1>Heard of the STR loophole with bonus depreciation?</h1>
+        <p class="hero-hook">Most high-income professionals miss out because the short-term rental has to be <em>actively managed</em> and set up correctly from day one. We coordinate the entire process — acquisition to first guest — so the strategy actually works.</p>
+        <a href="services.html" class="pill-btn">Get Started &rarr;</a>
+        <div class="hero-trust">
+          <span>12+ properties launched</span>
+          <span class="trust-dot">&middot;</span>
+          <span>47 avg. days to operations</span>
+          <span class="trust-dot">&middot;</span>
+          <span>100% hands-off for the investor</span>
+        </div>
       </div>
+
+      <div class="hero-right">
+        <div class="steps-panel">
+          <div class="steps-panel-head">
+            <p class="eyebrow">Complete Roadmap</p>
+            <h3>6 Steps to Your First STR</h3>
+            <p class="steps-sub">Step 1 is free — download it and see exactly what's involved.</p>
+          </div>
+          <div class="steps-list">
+
+            <div class="step-row">
+              <div class="step-badge">01</div>
+              <div class="step-body">
+                <div class="step-name">STR Acquisition Advisory</div>
+                <div class="step-meta">Market selection &middot; buy box &middot; investment criteria</div>
+              </div>
+              <a href="Step1_STR_Acquisition_Advisory_Guide.docx" download class="step-dl-btn free">Free &darr;</a>
+            </div>
+
+            <div class="step-row">
+              <div class="step-badge locked-badge">02</div>
+              <div class="step-body">
+                <div class="step-name">Mortgage Guide</div>
+                <div class="step-meta">Financing options for W-2 professionals</div>
+              </div>
+              <button class="step-dl-btn locked" data-href="Step2_Mortgage_Guide_Busy_Professionals.docx" data-title="Mortgage Guide for Busy Professionals">Unlock &darr;</button>
+            </div>
+
+            <div class="step-row">
+              <div class="step-badge locked-badge">03</div>
+              <div class="step-body">
+                <div class="step-name">Property Setup Guide</div>
+                <div class="step-meta">Pre-closing setup &middot; repairs &middot; readiness checklist</div>
+              </div>
+              <button class="step-dl-btn locked" data-href="Step3_STR_Property_Setup_Guide.docx" data-title="STR Property Setup Guide">Unlock &darr;</button>
+            </div>
+
+            <div class="step-row">
+              <div class="step-badge locked-badge">04</div>
+              <div class="step-body">
+                <div class="step-name">Furniture Plan Guide</div>
+                <div class="step-meta">Room-by-room plan &middot; order tracking &middot; budget</div>
+              </div>
+              <button class="step-dl-btn locked" data-href="Step4_STR_FurniturePlan_Guide.docx" data-title="STR Furniture Plan Guide">Unlock &darr;</button>
+            </div>
+
+            <div class="step-row">
+              <div class="step-badge locked-badge">05</div>
+              <div class="step-body">
+                <div class="step-name">Permit Processing Guide</div>
+                <div class="step-meta">STR permits &middot; compliance &middot; HOA &middot; licensing</div>
+              </div>
+              <button class="step-dl-btn locked" data-href="Step5_STR_Permit_Processing_Guide.docx" data-title="STR Permit Processing Guide">Unlock &darr;</button>
+            </div>
+
+            <div class="step-row">
+              <div class="step-badge locked-badge">06</div>
+              <div class="step-body">
+                <div class="step-name">Final Listing Guide</div>
+                <div class="step-meta">Photography &middot; Airbnb/VRBO setup &middot; launch day</div>
+              </div>
+              <button class="step-dl-btn locked" data-href="Step6_STR_Final_Listing_Guide.docx" data-title="STR Final Listing Guide">Unlock &darr;</button>
+            </div>
+
+          </div>
+          <a href="services.html" class="steps-panel-cta">View full service pricing &rarr;</a>
+        </div>
+      </div>
+
     </section>
 
-    <!-- Stats bar -->
+    <!-- ── Stats bar ─────────────────────────────────────────────── -->
     <div class="stats-bar">
       <div class="stat-item"><span class="stat-num">4</span><span class="stat-label">Markets Served</span></div>
       <div class="stat-item"><span class="stat-num">12+</span><span class="stat-label">Properties Launched</span></div>
@@ -40,39 +128,7 @@
       <div class="stat-item"><span class="stat-num">100%</span><span class="stat-label">Hands-Off Process</span></div>
     </div>
 
-    <!-- Committed split -->
-    <section class="split-section page-wrap">
-      <div class="split-img placeholder-img"></div>
-      <div class="split-content">
-        <h2>Committed to Informed Property Investments</h2>
-        <p>E2E STR leverages structured workflows and decades of aggregated market data to deliver actionable recommendations that safeguard investor interests while maximizing asset value.</p>
-        <a class="pill-btn" href="case-studies.html">Learn More</a>
-      </div>
-    </section>
-
-    <!-- Professional Services -->
-    <section id="services" class="services-section page-wrap">
-      <h2 class="section-heading">Professional Services</h2>
-      <div class="services-grid">
-        <div class="service-item">
-          <h3>Acquisition<br>Support</h3>
-          <p>Market identification, local realtor outreach, offer milestone tracking, and mortgage checklist coordination for sellers.</p>
-          <a href="portal.html" class="text-link">Open Portal</a>
-        </div>
-        <div class="service-item">
-          <h3>Pre&#8209;Closing<br>Setup</h3>
-          <p>Inspection, repairs, furnishing plan, furniture order, permits, and utility readiness before closing.</p>
-          <a href="portal.html" class="text-link">Get Started</a>
-        </div>
-        <div class="service-item">
-          <h3>Operations<br>Launch</h3>
-          <p>Assembly, staging, photoshoot, listing, cleaning crew, time tracking, and financial tracking setup.</p>
-          <a href="mailto:hello@e2estr.com" class="text-link">Schedule Consultation</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- How it works -->
+    <!-- ── How it works ───────────────────────────────────────────── -->
     <section class="process-section page-wrap">
       <h2 class="section-heading">How It Works</h2>
       <div class="process-grid">
@@ -99,42 +155,49 @@
       </div>
     </section>
 
-    <!-- Reserve a Consultation -->
+    <!-- ── Reserve consultation ──────────────────────────────────── -->
     <section class="consult-section page-wrap">
       <div class="consult-left">
         <h2>Reserve a Private Consultation</h2>
-        <p>Engage with a licensed advisor to evaluate objectives, constraints, and timeline requirements.</p>
+        <p>Engage with a licensed advisor to evaluate your objectives, timeline, and tax strategy fit.</p>
         <div class="consult-img placeholder-img"></div>
       </div>
       <div class="consult-right">
         <p class="appt-label">&#9633; Select Appointment</p>
         <div class="appt-list">
           <div class="appt-item">
-            <div>
-              <strong>Free Consultation</strong>
-              <span>30 minutes</span>
-            </div>
-            <a href="mailto:hello@e2estr.com" class="book-btn">BOOK</a>
+            <div><strong>Free Strategy Call</strong><span>30 minutes &middot; no commitment</span></div>
+            <a href="mailto:hello@e2estr.com?subject=Free Strategy Call" class="book-btn">BOOK</a>
           </div>
           <div class="appt-item">
-            <div>
-              <strong>Basic Service</strong>
-              <span>1 hour @ $99.00</span>
-            </div>
-            <a href="mailto:hello@e2estr.com" class="book-btn">BOOK</a>
+            <div><strong>Acquisition Advisory</strong><span>1 hour &middot; market + buy box review</span></div>
+            <a href="mailto:hello@e2estr.com?subject=Acquisition Advisory Session" class="book-btn">BOOK</a>
           </div>
           <div class="appt-item">
-            <div>
-              <strong>Advanced Service</strong>
-              <span>1 hour @ $199.00</span>
-            </div>
-            <a href="mailto:hello@e2estr.com" class="book-btn">BOOK</a>
+            <div><strong>Full Scope Review</strong><span>90 min &middot; end-to-end project scoping</span></div>
+            <a href="mailto:hello@e2estr.com?subject=Full Scope Review" class="book-btn">BOOK</a>
           </div>
         </div>
       </div>
     </section>
 
   </main>
+
+  <!-- ── Email capture modal ───────────────────────────────────────── -->
+  <div id="emailModal" class="email-modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="email-modal-card">
+      <button id="modalClose" class="modal-close-btn" aria-label="Close">&times;</button>
+      <p class="eyebrow">Free Download</p>
+      <h2 id="modalStepTitle" class="email-modal-title">Unlock This Guide</h2>
+      <p class="email-modal-desc">Enter your email to download this guide instantly. We'll occasionally share STR strategy updates — no spam, unsubscribe anytime.</p>
+      <form id="emailCaptureForm" novalidate>
+        <input type="email" id="captureEmail" class="email-modal-input" placeholder="your@email.com" required autocomplete="email" />
+        <p class="email-modal-error hidden" id="emailError">Please enter a valid email address.</p>
+        <button type="submit" class="button primary" style="width:100%;margin-top:12px;">Download &amp; Subscribe &rarr;</button>
+      </form>
+      <input type="hidden" id="modalDownloadHref" value="" />
+    </div>
+  </div>
 
   <footer class="site-footer">
     <div class="footer-inner">
@@ -143,7 +206,7 @@
         <span class="footer-tagline">End-to-End STR Concierge</span>
       </div>
       <nav class="footer-links">
-        <a href="#services">Services</a>
+        <a href="services.html">Services</a>
         <a href="case-studies.html">Projects</a>
         <a href="portal.html">Portal</a>
         <a href="mailto:hello@e2estr.com">Contact</a>
@@ -151,6 +214,61 @@
       <span class="footer-copy">&copy; 2025 E2E STR</span>
     </div>
   </footer>
+
+  <script>
+  (function(){
+    // Email modal logic
+    var modal = document.getElementById('emailModal');
+    var closeBtn = document.getElementById('modalClose');
+    var form = document.getElementById('emailCaptureForm');
+    var emailInput = document.getElementById('captureEmail');
+    var hrefInput = document.getElementById('modalDownloadHref');
+    var titleEl = document.getElementById('modalStepTitle');
+    var errorEl = document.getElementById('emailError');
+
+    document.querySelectorAll('.step-dl-btn.locked').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var href = btn.getAttribute('data-href');
+        var title = btn.getAttribute('data-title') || 'This Guide';
+        hrefInput.value = href;
+        titleEl.textContent = 'Unlock: ' + title;
+        errorEl.classList.add('hidden');
+        emailInput.value = '';
+        modal.classList.remove('hidden');
+        setTimeout(function(){ emailInput.focus(); }, 80);
+      });
+    });
+
+    closeBtn.addEventListener('click', function(){ modal.classList.add('hidden'); });
+    modal.addEventListener('click', function(e){ if(e.target === modal) modal.classList.add('hidden'); });
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var email = emailInput.value.trim();
+      var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if(!re.test(email)){
+        errorEl.classList.remove('hidden');
+        emailInput.focus();
+        return;
+      }
+      errorEl.classList.add('hidden');
+      // Persist email (demo — in production, POST to your CRM/Mailchimp)
+      try{
+        var list = JSON.parse(localStorage.getItem('e2eSTR.subscribers') || '[]');
+        list.push({ email: email, date: new Date().toISOString() });
+        localStorage.setItem('e2eSTR.subscribers', JSON.stringify(list));
+      } catch(err){}
+      // Trigger download
+      var a = document.createElement('a');
+      a.href = hrefInput.value;
+      a.download = '';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      modal.classList.add('hidden');
+    });
+  })();
+  </script>
 
 </body>
 </html>
