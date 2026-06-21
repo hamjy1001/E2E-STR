@@ -661,3 +661,169 @@ td input[type="number"] { min-width: 95px; }
   .cp-details-grid { grid-template-columns:repeat(2,1fr); }
   .stats-bar .stat-item { flex:1 1 50%; }
 }
+
+/* ─── Footer ────────────────────────────────────────────────────── */
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 52px clamp(20px, 5vw, 64px);
+}
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 40px;
+}
+.footer-brand .footer-name {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--dark);
+  display: block;
+}
+.footer-brand .footer-tagline {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: block;
+  margin-top: 4px;
+}
+.footer-links {
+  display: flex;
+  gap: 28px;
+}
+.footer-links a {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+.footer-links a:hover { color: var(--dark); text-decoration: underline; }
+.footer-copy {
+  font-size: 11px;
+  color: #bbb;
+  letter-spacing: 0.04em;
+}
+@media (max-width: 700px) {
+  .footer-inner { grid-template-columns: 1fr; gap: 24px; }
+}
+
+/* ─── Hover polish ──────────────────────────────────────────────── */
+.service-item { transition: background 0.2s; }
+.service-item:hover { background: #fafaf9; }
+.nav-cta, .pill-btn, .book-btn, .cp-send-btn { transition: background 0.18s, transform 0.18s; }
+.nav-cta:active, .pill-btn:active, .book-btn:active, .cp-send-btn:active { transform: scale(0.97); }
+.cp-stage-card { transition: box-shadow 0.2s, border-color 0.2s; }
+.cp-stage-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
+
+/* ─── Portal entrance page ──────────────────────────────────────── */
+.portal-choice {
+  display: grid;
+  place-items: center;
+  min-height: calc(100vh - 65px);
+  padding: 40px clamp(20px, 5vw, 64px);
+  background: #fff;
+}
+.portal-entrance {
+  width: 100%;
+  max-width: 900px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.portal-entrance-left p.eyebrow { margin-bottom: 20px; }
+.portal-entrance-left h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(40px, 6vw, 64px);
+  font-weight: 400;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  margin: 0 0 20px;
+}
+.portal-entrance-left p.portal-desc {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 0;
+  max-width: 320px;
+}
+.portal-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.portal-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 32px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  text-decoration: none;
+  color: var(--dark);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.portal-card:hover {
+  border-color: var(--dark);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+.portal-card-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.portal-card-title {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--dark);
+}
+.portal-card-arrow {
+  font-size: 22px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.portal-card.primary-card {
+  background: var(--dark);
+  border-color: var(--dark);
+}
+.portal-card.primary-card .portal-card-label,
+.portal-card.primary-card .portal-card-title,
+.portal-card.primary-card .portal-card-arrow { color: #fff; }
+@media (max-width: 700px) {
+  .portal-entrance { grid-template-columns: 1fr; gap: 40px; }
+}
+
+/* ─── Project cards ─────────────────────────────────────────────── */
+.project-card {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 36px 32px;
+  background: #fff;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.project-card:hover {
+  border-color: #999;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+.project-card .eyebrow { margin-bottom: 16px; }
+.project-card h3 {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  margin: 0 0 12px;
+}
+.project-card p { font-size: 14px; color: var(--muted); line-height: 1.65; margin: 0 0 8px; }
+.project-card p:last-child { margin-bottom: 0; }
+
+/* ─── Case studies hero ─────────────────────────────────────────── */
+.cs-hero { padding: 80px 0 60px; border-bottom: 1px solid var(--line); margin-bottom: 60px; }
+.cs-hero h1 { margin: 12px 0 20px; }
