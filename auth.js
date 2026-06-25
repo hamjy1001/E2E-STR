@@ -1,16 +1,8 @@
-/* auth.js — shared auth utility for E2E STR
- * Manages user sessions and nav state across all pages.
- * Users are stored in localStorage (demo-mode — swap for a real backend later).
- *
- * Data model:
- *   e2eSTR.users   — array of { email, password, type ('paying'|'free'), name }
- *   e2eSTR.session — current session { email, type, name }
- */
+/* auth.js — shared auth utility for E2E STR */
 (function () {
-  var AUTH_KEY    = 'e2eSTR.session';
-  var USERS_KEY   = 'e2eSTR.users';
+  var AUTH_KEY  = 'e2eSTR.session';
+  var USERS_KEY = 'e2eSTR.users';
 
-  /* ── Core helpers ───────────────────────────────────────────────── */
   function getSession() {
     try { return JSON.parse(localStorage.getItem(AUTH_KEY)); } catch (e) { return null; }
   }
@@ -30,38 +22,51 @@
     return getUsers().find(function (u) { return u.email.toLowerCase() === email.toLowerCase(); }) || null;
   }
 
-  /* Seed a demo paying client so there's always at least one test account */
   function seedDemo() {
     var users = getUsers();
-    var hasSeed = users.some(function (u) { return u.email === 'demo@e2estr.com'; });
-    if (!hasSeed) {
+    if (!users.some(function (u) { return u.email === 'demo@e2estr.com'; })) {
       users.push({ email: 'demo@e2estr.com', password: 'client2024', type: 'paying', name: 'Demo Client', setup: true });
       saveUsers(users);
     }
   }
 
-  /* ── Nav update ─────────────────────────────────────────────────── */
+  /* ── Nav: inject Sign In / My Portal + Sign Out ─────────────────── */
   function updateNav() {
-    var session = getSession();
-    var btn = document.querySelector('.nav-signin');
-    if (!btn) return;
+    var session  = getSession();
+    var actions  = document.querySelector('.nav-actions');
+    var signinEl = document.querySelector('.nav-signin');
+    if (!actions && !signinEl) return;
+
     if (session) {
-      btn.textContent = session.type === 'paying' ? 'My Portal' : 'My Account';
-      btn.href = session.type === 'paying' ? 'client.html' : 'plans.html';
-      btn.classList.add('nav-signin--active');
+      /* Swap Sign In for "My Portal" + "Sign Out" */
+      if (signinEl) {
+        signinEl.textContent = session.type === 'paying' ? 'My Portal' : 'My Account';
+        signinEl.href = session.type === 'paying' ? 'client.html' : 'plans.html';
+        signinEl.classList.add('nav-signin--active');
+      }
+      /* Inject Sign Out button if not already there */
+      if (actions && !actions.querySelector('.nav-signout')) {
+        var out = document.createElement('button');
+        out.className = 'nav-signout';
+        out.textContent = 'Sign Out';
+        out.addEventListener('click', function () {
+          clearSession();
+          window.location.href = 'index.html';
+        });
+        actions.insertBefore(out, actions.firstChild);
+      }
     }
   }
 
   /* ── Public API ─────────────────────────────────────────────────── */
   window.E2EAuth = {
-    getSession:  getSession,
-    setSession:  setSession,
+    getSession:   getSession,
+    setSession:   setSession,
     clearSession: clearSession,
-    getUsers:    getUsers,
-    saveUsers:   saveUsers,
-    findUser:    findUser,
+    getUsers:     getUsers,
+    saveUsers:    saveUsers,
+    findUser:     findUser,
 
-    /* Register a new user (called by team portal) */
     addUser: function (email, name, type) {
       var users = getUsers();
       if (users.some(function (u) { return u.email.toLowerCase() === email.toLowerCase(); })) return false;
@@ -70,7 +75,6 @@
       return true;
     },
 
-    /* Set / change password for a user */
     setPassword: function (email, password) {
       var users = getUsers();
       var user = users.find(function (u) { return u.email.toLowerCase() === email.toLowerCase(); });
@@ -81,7 +85,6 @@
       return true;
     },
 
-    /* Attempt login. Returns { ok, user, reason } */
     login: function (email, password) {
       var user = findUser(email);
       if (!user) return { ok: false, reason: 'no_account' };
@@ -89,10 +92,19 @@
       if (user.password !== password) return { ok: false, reason: 'wrong_password' };
       setSession(user);
       return { ok: true, user: user };
+    },
+
+    signOut: function (redirectTo) {
+      clearSession();
+      window.location.href = redirectTo || 'index.html';
+    },
+
+    /* Returns all email subscribers (from guide unlock flow) */
+    getSubscribers: function () {
+      try { return JSON.parse(localStorage.getItem('e2eSTR.subscribers')) || []; } catch (e) { return []; }
     }
   };
 
-  /* ── Init ───────────────────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', function () {
     seedDemo();
     updateNav();
