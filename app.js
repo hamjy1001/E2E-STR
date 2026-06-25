@@ -171,11 +171,10 @@
     }
 
     if(page === 'client'){
-      // Client portal uses E2EAuth email+password session
+      // Any logged-in user can access client portal; paying users see full project data
       const auth = window.E2EAuth;
       const session = auth ? auth.getSession() : null;
-      if(session && session.type === 'paying'){ showApp(page); return; }
-      if(session && session.type !== 'paying'){ window.location.href='plans.html'; return; }
+      if(session){ showApp(page); return; }
 
       $('#loginForm')?.addEventListener('submit', e=>{
         e.preventDefault();
@@ -184,14 +183,10 @@
         const password = ($('#cpPassword')?.value||'');
         const errEl = $('#cpError');
         const result = auth.login(email, password);
-        if(result.ok){
-          if(result.user.type === 'paying'){ showApp(page); }
-          else { window.location.href='plans.html'; }
-          return;
-        }
+        if(result.ok){ showApp(page); return; }
         if(errEl){
           errEl.style.display='block';
-          if(result.reason==='no_account') errEl.textContent="No account found for that email. Check your onboarding email or view our plans.";
+          if(result.reason==='no_account') errEl.textContent="No account found. Please sign up at the login page.";
           else if(result.reason==='needs_setup') errEl.textContent="Account not set up yet — visit the sign-in page to create your password.";
           else errEl.textContent="Incorrect password. Please try again.";
         }
@@ -364,7 +359,32 @@
       <section class="panel"><div class="panel-header"><div><h2>Data / Export</h2><p>Export the full portal state or selected workflow tables. This static MVP stores data in this browser.</p></div></div><div class="button-row"><button id="exportJson" class="button primary">Export Full JSON</button><button id="exportTasks" class="button secondary">Export Tasks CSV</button><button id="exportBudget" class="button secondary">Export Budget CSV</button><button id="exportVendors" class="button secondary">Export Vendors CSV</button></div><pre class="code-box">${esc(JSON.stringify(state,null,2))}</pre></section>`;
   }
 
+  function renderClientGetStarted(session){
+    const name = session && session.name ? session.name.split(' ')[0] : 'there';
+    const app = $('#app');
+    if(!app) return;
+    app.innerHTML = `
+      <div class="cp-getstarted-wrap">
+        <div class="cp-getstarted-card">
+          <div class="cp-getstarted-icon">&#127968;</div>
+          <h1 class="cp-getstarted-title">Hey ${esc(name)}, welcome to your portal.</h1>
+          <p class="cp-getstarted-body">Your project dashboard will appear here once you have an active property with us. In the meantime, explore our plans or book a free consultation — we'd love to get you started.</p>
+          <div class="cp-getstarted-actions">
+            <a href="plans.html" class="button primary">See our plans &rarr;</a>
+            <a href="plans.html#consult" class="button secondary">Book a consultation</a>
+          </div>
+          <p class="cp-getstarted-note">Already in talks with us? Reach out at <a href="mailto:hello@e2estr.com">hello@e2estr.com</a> and we'll get your portal set up.</p>
+        </div>
+      </div>`;
+  }
+
   function renderClient(){
+    const auth = window.E2EAuth;
+    const session = auth ? auth.getSession() : null;
+    if(!session || session.type !== 'paying'){
+      renderClientGetStarted(session);
+      return;
+    }
     const tasks = visibleTasks('client').slice().sort((a,b)=>STAGES.indexOf(a.stage)-STAGES.indexOf(b.stage)||dateVal(a.startDate)-dateVal(b.startDate));
     const budget = budgetTotals();
     const needs = clientNeedItems(tasks);

@@ -40,8 +40,8 @@
     if (session) {
       /* Swap Sign In for "My Portal" + "Sign Out" */
       if (signinEl) {
-        signinEl.textContent = session.type === 'paying' ? 'My Portal' : 'My Account';
-        signinEl.href = session.type === 'paying' ? 'client.html' : 'plans.html';
+        signinEl.textContent = 'My Portal';
+        signinEl.href = 'client.html';
         signinEl.classList.add('nav-signin--active');
       }
       /* Inject Sign Out button if not already there */

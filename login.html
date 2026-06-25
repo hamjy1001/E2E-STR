@@ -37,7 +37,7 @@
       <div class="auth-card-head">
         <p class="eyebrow">Client Access</p>
         <h1 class="auth-title">Sign in to your<br>project portal</h1>
-        <p class="auth-sub">For existing E2E STR clients. Not a client yet? <a href="plans.html">View our plans.</a></p>
+        <p class="auth-sub">Sign in to your project portal. New here? <button class="auth-link-btn" id="toSetup2">Create an account &rarr;</button></p>
       </div>
 
       <form id="signinForm" novalidate>
@@ -54,25 +54,29 @@
       </form>
 
       <div class="auth-divider"><span>or</span></div>
-      <p class="auth-switch">New client? <button class="auth-link-btn" id="toSetup">Set up your account &rarr;</button></p>
+      <p class="auth-switch">No account yet? <button class="auth-link-btn" id="toSetup">Sign up free &rarr;</button></p>
       <p class="auth-demo-note">Demo account: <code>demo@e2estr.com</code> / <code>client2024</code></p>
     </div>
 
-    <!-- ── Set up password panel ──────────────────────────────────── -->
+    <!-- ── Sign Up panel ────────────────────────────────────────── -->
     <div id="panelSetup" class="auth-card hidden">
       <div class="auth-card-head">
-        <p class="eyebrow">First Time Here?</p>
-        <h1 class="auth-title">Set up your<br>account password</h1>
-        <p class="auth-sub">Enter the email address you received communications from us on, then choose a password.</p>
+        <p class="eyebrow">Create Account</p>
+        <h1 class="auth-title">Sign up for<br>your client portal</h1>
+        <p class="auth-sub">Create a free account to track your project. Once you start a project with us, your dashboard will be ready to go.</p>
       </div>
 
       <form id="setupForm" novalidate>
+        <label class="auth-field">
+          <span>Full Name</span>
+          <input id="suName" type="text" placeholder="Your name" autocomplete="name" required />
+        </label>
         <label class="auth-field">
           <span>Email</span>
           <input id="suEmail" type="email" placeholder="you@email.com" autocomplete="email" required />
         </label>
         <label class="auth-field">
-          <span>Choose a password</span>
+          <span>Password</span>
           <input id="suPassword" type="password" placeholder="At least 8 characters" autocomplete="new-password" required minlength="8" />
         </label>
         <label class="auth-field">
@@ -80,7 +84,7 @@
           <input id="suConfirm" type="password" placeholder="Repeat password" autocomplete="new-password" required />
         </label>
         <p id="suError" class="auth-error hidden"></p>
-        <button type="submit" class="button primary auth-submit">Create Password &rarr;</button>
+        <button type="submit" class="button primary auth-submit">Create Account &rarr;</button>
       </form>
 
       <p class="auth-switch"><button class="auth-link-btn" id="toSignin">&larr; Back to sign in</button></p>
@@ -126,18 +130,10 @@
         var user = result.user;
         document.getElementById('successTitle').textContent =
           'Welcome' + (user.name ? ', ' + user.name.split(' ')[0] : '') + '.';
-
-        if (user.type === 'paying') {
-          document.getElementById('successMsg').textContent =
-            'Taking you to your project dashboard.';
-          show('success');
-          setTimeout(function () { window.location.href = 'client.html'; }, 1400);
-        } else {
-          document.getElementById('successMsg').textContent =
-            "You're on our list but don't have an active project yet. We're redirecting you to our plans page.";
-          show('success');
-          setTimeout(function () { window.location.href = 'plans.html'; }, 2200);
-        }
+        document.getElementById('successMsg').textContent =
+          'Taking you to your portal now.';
+        show('success');
+        setTimeout(function () { window.location.href = 'client.html'; }, 1400);
         return;
       }
 
@@ -151,14 +147,22 @@
       }
     });
 
-    /* ── Password Setup ───────────────────────────────────────────── */
+    /* ── Sign Up ──────────────────────────────────────────────────── */
     document.getElementById('setupForm').addEventListener('submit', function (e) {
       e.preventDefault();
+      var name     = document.getElementById('suName').value.trim();
       var email    = document.getElementById('suEmail').value.trim();
       var pass     = document.getElementById('suPassword').value;
       var confirm  = document.getElementById('suConfirm').value;
       var errEl    = document.getElementById('suError');
 
+      errEl.classList.add('hidden');
+
+      if (!name) {
+        errEl.textContent = 'Please enter your name.';
+        errEl.classList.remove('hidden');
+        return;
+      }
       if (pass.length < 8) {
         errEl.textContent = 'Password must be at least 8 characters.';
         errEl.classList.remove('hidden');
@@ -170,38 +174,42 @@
         return;
       }
 
-      var user = E2EAuth.findUser(email);
-      if (!user) {
-        errEl.textContent = "We couldn't find an account for that email. If you're a new client, please check your onboarding email or contact us at hello@e2estr.com.";
-        errEl.classList.remove('hidden');
+      // If they already have an account (e.g. paying client), just set/update password
+      var existing = E2EAuth.findUser(email);
+      if (existing) {
+        E2EAuth.setPassword(email, pass);
+        E2EAuth.setSession(existing);
+        document.getElementById('successTitle').textContent =
+          'Welcome back' + (existing.name ? ', ' + existing.name.split(' ')[0] : '') + '.';
+        document.getElementById('successMsg').textContent = 'Taking you to your portal now.';
+        show('success');
+        setTimeout(function () { window.location.href = 'client.html'; }, 1400);
         return;
       }
 
+      // Brand new account — anyone can sign up
+      E2EAuth.addUser(email, name, 'free');
       E2EAuth.setPassword(email, pass);
-      E2EAuth.setSession(user);
+      var newUser = E2EAuth.findUser(email);
+      E2EAuth.setSession(newUser);
 
       document.getElementById('successTitle').textContent =
-        'Account created' + (user.name ? ', ' + user.name.split(' ')[0] : '') + '.';
+        'Welcome, ' + name.split(' ')[0] + '.';
       document.getElementById('successMsg').textContent =
-        user.type === 'paying'
-          ? 'Your password is set. Taking you to your project dashboard.'
-          : "Your password is set. We'll redirect you to our plans page.";
+        'Your account is ready. Taking you to your portal now.';
       show('success');
-      setTimeout(function () {
-        window.location.href = user.type === 'paying' ? 'client.html' : 'plans.html';
-      }, 1600);
+      setTimeout(function () { window.location.href = 'client.html'; }, 1400);
     });
 
     /* ── Panel toggles ───────────────────────────────────────────── */
     document.getElementById('toSetup').addEventListener('click',  function () { show('setup'); });
+    document.getElementById('toSetup2').addEventListener('click', function () { show('setup'); });
     document.getElementById('toSignin').addEventListener('click', function () { show('signin'); });
 
     /* ── If already logged in, skip straight through ─────────────── */
     document.addEventListener('DOMContentLoaded', function () {
       var session = E2EAuth.getSession();
-      if (session) {
-        window.location.href = session.type === 'paying' ? 'client.html' : 'plans.html';
-      }
+      if (session) { window.location.href = 'client.html'; }
     });
   })();
   </script>

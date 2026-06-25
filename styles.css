@@ -1898,3 +1898,52 @@ td input[type="number"] { min-width: 95px; }
   .svc-cta-bar { flex-direction: column; align-items: flex-start; }
   .hero-photo { height: 160px; }
 }
+
+/* ── Client portal: Get Started screen ─────────────────────────── */
+.cp-getstarted-wrap {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+}
+.cp-getstarted-card {
+  max-width: 540px;
+  width: 100%;
+  text-align: center;
+  padding: 56px 48px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--bg);
+}
+.cp-getstarted-icon {
+  font-size: 48px;
+  margin-bottom: 24px;
+}
+.cp-getstarted-title {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--dark);
+  margin: 0 0 16px;
+}
+.cp-getstarted-body {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0 0 32px;
+}
+.cp-getstarted-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.cp-getstarted-note {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+.cp-getstarted-note a { color: var(--dark); }
+}
